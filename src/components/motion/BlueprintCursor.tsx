@@ -71,7 +71,7 @@ export function BlueprintCursor() {
         <span className="relative block size-10">
           <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/90" />
           <span className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-white/90" />
-          <span className="absolute left-1/2 top-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-molten" />
+          <span className="absolute left-1/2 top-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-maroon" />
         </span>
       ) : (
         <span

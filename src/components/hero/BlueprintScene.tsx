@@ -2,8 +2,13 @@ import { useMemo, useRef } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Line } from '@react-three/drei'
 import * as THREE from 'three'
+import { color } from '@/styles/tokens'
 
-function BlueprintFrame({ pointer }: { pointer: React.MutableRefObject<{ x: number; y: number }> }) {
+function BlueprintFrame({
+  pointer,
+}: {
+  pointer: React.MutableRefObject<{ x: number; y: number }>
+}) {
   const group = useRef<THREE.Group>(null)
 
   const edges = useMemo(() => {
@@ -54,25 +59,41 @@ function BlueprintFrame({ pointer }: { pointer: React.MutableRefObject<{ x: numb
 
   return (
     <group ref={group} position={[0.9, 0.1, 0]}>
-      <Line points={edges} color="#C9A45C" lineWidth={1.2} transparent opacity={0.8} />
+      <Line
+        points={edges}
+        color={color.steel}
+        lineWidth={1.2}
+        transparent
+        opacity={0.8}
+      />
       {gridLines.map((pts, i) => (
         <Line
           key={i}
           points={pts as [number, number, number][]}
-          color="#2E7D6E"
+          color={color.coolGrey}
           lineWidth={0.6}
           transparent
-          opacity={0.4}
+          opacity={0.35}
           position={[0, -1.4, 0]}
         />
       ))}
       <mesh>
         <boxGeometry args={[1.2, 1.2, 1.2]} />
-        <meshBasicMaterial color="#E0632A" wireframe transparent opacity={0.55} />
+        <meshBasicMaterial
+          color={color.maroon}
+          wireframe
+          transparent
+          opacity={0.55}
+        />
       </mesh>
       <mesh position={[0.55, 0.55, 0.55]}>
         <boxGeometry args={[0.35, 0.35, 0.35]} />
-        <meshBasicMaterial color="#C9A45C" wireframe transparent opacity={0.85} />
+        <meshBasicMaterial
+          color={color.steel}
+          wireframe
+          transparent
+          opacity={0.85}
+        />
       </mesh>
     </group>
   )

@@ -1,52 +1,57 @@
 @import 'tailwindcss';
 
 @theme {
-  /* ── Option B primitives: Deep Teal & Molten Copper ── */
-  --color-abyss: #06231f;
-  --color-pine: #0f3d35;
-  --color-verdigris: #2e7d6e;
-  --color-bone: #f3f1ec;
-  --color-molten: #e0632a;
-  --color-molten-hover: #e8733a;
-  --color-brass: #c9a45c;
-  --color-ink-muted: #3f5650; /* derived — AA body on Bone */
-  --color-surface-warm: #eae7e1;
-  --color-border-warm: #d6d1c8;
-  --color-focus-light: #06231f;
-  --color-focus-dark: #5ed0bc;
+  /* ── Maroon & Steel primitives ── */
+  --color-ink: #1c2023;
+  --color-wine: #5c1c27;
+  --color-maroon: #822c38;
+  --color-steel: #5e7079;
+  --color-cool-grey: #c6cbce;
+  --color-snow: #f4f3f1;
+  --color-white: #fcfbfa;
 
-  /* Legacy aliases → new system (sitewide remap without hunting every class) */
-  --color-navy-950: #06231f;
-  --color-navy-900: #0f3d35;
-  --color-navy-800: #164a41;
-  --color-blue-600: #2e7d6e;
-  --color-blue-500: #3a9483;
-  --color-copper-600: #e0632a;
-  --color-copper-500: #e8733a;
-  --color-copper-100: #f6e4d8;
-  --color-charcoal-900: #06231f;
-  --color-charcoal-800: #0f3d35;
-  --color-grey-50: #f3f1ec;
-  --color-grey-100: #eae7e1;
-  --color-grey-300: #d6d1c8;
-  --color-grey-500: #3f5650;
-  --color-grey-700: #06231f;
-  --color-success: #1f7a4c;
-  --color-error: #b42318;
-  --color-focus: #06231f;
-  --color-on-action: #06231f;
+  /* Semantic */
+  --color-page: #f4f3f1;
+  --color-muted: #fcfbfa;
+  --color-surface: #fcfbfa;
+  --color-inverse: #5c1c27;
+  --color-dark: #1c2023;
+  --color-primary: #1c2023;
+  --color-secondary: #5e7079;
+  --color-subtle: #5e7079;
+  --color-action: #822c38;
+  --color-action-hover: #5c1c27;
+  /* Cream label on maroon/wine — never ink/steel on these fills */
+  --color-on-maroon: #fcfbfa;
+  --color-on-action: #fcfbfa; /* alias → on-maroon */
+  --color-border: #c6cbce;
+  --color-focus: #822c38;
+  --color-success: #2f6b4f;
+  --color-error: #9b2c2c;
 
-  /* Semantic tokens */
-  --color-page: #f3f1ec;
-  --color-muted: #eae7e1;
-  --color-inverse: #06231f;
-  --color-dark: #0f3d35;
-  --color-primary: #06231f;
-  --color-secondary: #3f5650;
-  --color-subtle: #3f5650;
-  --color-action: #e0632a;
-  --color-action-hover: #e8733a;
-  --color-border: #d6d1c8;
+  /* Legacy class aliases → Maroon & Steel */
+  --color-navy-950: #5c1c27;
+  --color-navy-900: #5c1c27;
+  --color-navy-800: #822c38;
+  --color-blue-600: #5e7079;
+  --color-blue-500: #5e7079;
+  --color-copper-600: #822c38;
+  --color-copper-500: #5c1c27;
+  --color-copper-100: #e8d5d8;
+  --color-charcoal-900: #1c2023;
+  --color-charcoal-800: #5c1c27;
+  --color-grey-50: #f4f3f1;
+  --color-grey-100: #fcfbfa;
+  --color-grey-300: #c6cbce;
+  --color-grey-500: #5e7079;
+  --color-grey-700: #1c2023;
+  --color-abyss: #1c2023;
+  --color-pine: #5c1c27;
+  --color-verdigris: #5e7079;
+  --color-bone: #f4f3f1;
+  --color-molten: #822c38;
+  --color-molten-hover: #5c1c27;
+  --color-brass: #c6cbce;
 
   /* Typography */
   --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
@@ -89,8 +94,8 @@
 
   /* Motion */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --shadow-sm: 0 1px 2px rgb(6 35 31 / 0.08);
-  --shadow-md: 0 8px 24px rgb(6 35 31 / 0.12);
+  --shadow-sm: 0 1px 2px rgb(28 32 35 / 0.06);
+  --shadow-md: 0 8px 24px rgb(28 32 35 / 0.1);
 }
 
 @layer base {
@@ -113,7 +118,7 @@
   }
 
   body {
-    @apply m-0 bg-page font-sans text-body text-secondary antialiased;
+    @apply m-0 bg-page font-sans text-body text-primary antialiased;
   }
 
   :focus-visible {
@@ -121,7 +126,7 @@
   }
 
   ::selection {
-    @apply bg-copper-100 text-abyss;
+    @apply bg-maroon/15 text-ink;
   }
 
   html.blueprint-cursor-on,
@@ -143,58 +148,55 @@
     @apply mx-auto w-full max-w-[var(--container-wide)] px-4 sm:px-6 lg:px-8;
   }
 
-  /* Living Blueprint grid — brass/teal derived */
+  /* Blueprint grids — cool-grey on snow, steel on wine */
   .blueprint-grid {
     background-image:
-      linear-gradient(rgb(201 164 92 / 0.07) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(46 125 110 / 0.08) 1px, transparent 1px);
+      linear-gradient(color-mix(in srgb, var(--color-cool-grey) 55%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--color-cool-grey) 55%, transparent) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  .blueprint-grid-dark {
+    background-image:
+      linear-gradient(color-mix(in srgb, var(--color-steel) 35%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--color-steel) 35%, transparent) 1px, transparent 1px);
     background-size: 48px 48px;
   }
 
   .hero-mesh {
     background:
-      radial-gradient(ellipse 80% 60% at 15% 40%, rgb(46 125 110 / 0.28), transparent 55%),
-      radial-gradient(ellipse 70% 50% at 85% 30%, rgb(224 99 42 / 0.18), transparent 50%),
-      radial-gradient(ellipse 50% 40% at 60% 80%, rgb(201 164 92 / 0.12), transparent 45%),
-      #06231f;
-  }
-
-  .metallic-brass {
-    background-image: linear-gradient(
-      135deg,
-      #8a7040 0%,
-      #c9a45c 35%,
-      #f0d9a0 50%,
-      #c9a45c 65%,
-      #8a7040 100%
-    );
-  }
-
-  .metallic-molten {
-    background-image: linear-gradient(
-      135deg,
-      #9a3d14 0%,
-      #e0632a 40%,
-      #f0a06a 52%,
-      #e0632a 68%,
-      #9a3d14 100%
-    );
+      radial-gradient(ellipse 80% 55% at 12% 40%, color-mix(in srgb, var(--color-maroon) 28%, transparent), transparent 55%),
+      radial-gradient(ellipse 60% 45% at 88% 25%, color-mix(in srgb, var(--color-steel) 22%, transparent), transparent 50%),
+      radial-gradient(ellipse 50% 40% at 55% 85%, color-mix(in srgb, var(--color-wine) 40%, transparent), transparent 45%),
+      var(--color-ink);
   }
 
   .glass-light {
-    @apply border border-abyss/10 bg-bone/80 shadow-sm backdrop-blur-[12px];
+    @apply border border-cool-grey bg-white/85 shadow-sm backdrop-blur-[12px];
   }
 
   .glass-dark {
-    @apply border border-brass/15 bg-abyss/60 shadow-sm backdrop-blur-[12px];
+    @apply border border-cool-grey/20 bg-wine/70 shadow-sm backdrop-blur-[12px];
   }
 
+  /* Explicit so labels never inherit steel/ink on maroon|wine fills */
+  .text-on-maroon,
   .text-on-action {
-    color: var(--color-on-action);
+    color: var(--color-on-maroon);
+  }
+
+  .btn-primary {
+    background-color: var(--color-maroon);
+    color: var(--color-on-maroon);
+    font-weight: 500;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-wine);
+    color: var(--color-on-maroon);
   }
 }
 
-/* Lenis smooth scroll (subset) */
 html.lenis,
 html.lenis body {
   height: auto;

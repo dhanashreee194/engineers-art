@@ -32,14 +32,14 @@ export function Heading({
         <p
           className={cn(
             'text-xs font-medium uppercase tracking-[0.06em]',
-            inverse ? 'text-brass' : 'text-molten',
+            inverse ? 'text-cool-grey' : 'text-maroon',
           )}
         >
           {eyebrow}
         </p>
       ) : null}
-      <Comp
-        className={cn(levelClass[level], inverse && 'text-bone')}
+        <Comp
+        className={cn(levelClass[level], inverse && 'text-on-maroon')}
         {...props}
       >
         {children}

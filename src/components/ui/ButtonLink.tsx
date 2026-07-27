@@ -3,11 +3,11 @@ import { cn } from '@/lib/cn'
 
 const variants = {
   primary:
-    'bg-action text-on-action hover:bg-action-hover focus-visible:outline-focus shadow-sm',
+    'btn-primary shadow-sm focus-visible:outline-focus',
   secondary:
-    'bg-abyss text-bone hover:bg-pine focus-visible:outline-focus',
+    'bg-transparent text-steel border border-steel hover:bg-steel hover:text-on-maroon focus-visible:outline-focus',
   ghost:
-    'bg-transparent text-abyss border border-abyss/20 hover:border-abyss hover:bg-muted',
+    'bg-transparent text-ink border border-cool-grey hover:border-steel hover:bg-white',
 } as const
 
 const sizes = {
@@ -33,6 +33,8 @@ export function ButtonLink({
         'inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors duration-150',
         variants[variant],
         sizes[size],
+        /* Explicit cream on maroon — never inherit steel/ink body text */
+        variant === 'primary' && 'text-on-maroon hover:text-on-maroon',
         className,
       )}
       {...props}

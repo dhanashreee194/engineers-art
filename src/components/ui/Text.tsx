@@ -2,11 +2,11 @@ import type { HTMLAttributes, ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 
 const variants = {
-  body: 'text-body text-secondary',
+  body: 'text-body text-primary',
   lead: 'text-body-lg text-secondary',
-  muted: 'text-body text-subtle',
+  muted: 'text-body text-secondary',
   subhead: 'text-subhead font-medium text-secondary',
-  inverse: 'text-body text-bone/85',
+  inverse: 'text-body text-cool-grey',
 } as const
 
 export type TextProps = HTMLAttributes<HTMLElement> & {

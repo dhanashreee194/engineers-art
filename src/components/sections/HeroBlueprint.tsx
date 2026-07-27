@@ -11,6 +11,7 @@ import { Magnetic } from '@/components/motion/Magnetic'
 import { SplitHeading } from '@/components/motion/SplitHeading'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import { homeHero } from '@/content/home'
+import { color } from '@/styles/tokens'
 import { cn } from '@/lib/cn'
 
 const BlueprintScene = lazy(() =>
@@ -29,15 +30,15 @@ function BlueprintSvgOverlay({ reduced }: { reduced: boolean }) {
     >
       <motion.path
         d="M80 120 H420 M80 120 V320 M420 120 V200 H560"
-        stroke="#2E7D6E"
+        stroke={color.steel}
         strokeWidth="1"
-        initial={reduced ? false : { pathLength: 0, opacity: 0.2 }}
+        initial={reduced ? false : { pathLength: 0, opacity: 0.25 }}
         animate={{ pathLength: 1, opacity: 0.85 }}
         transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
       />
       <motion.path
         d="M980 160 H1320 M1320 160 V380 M1180 380 H1320"
-        stroke="#C9A45C"
+        stroke={color.maroon}
         strokeWidth="1.2"
         initial={reduced ? false : { pathLength: 0 }}
         animate={{ pathLength: 1 }}
@@ -45,7 +46,7 @@ function BlueprintSvgOverlay({ reduced }: { reduced: boolean }) {
       />
       <motion.path
         d="M120 720 H360 M240 680 V760 M1000 640 H1280 M1140 600 V720"
-        stroke="#E0632A"
+        stroke={color.coolGrey}
         strokeWidth="1"
         initial={reduced ? false : { pathLength: 0 }}
         animate={{ pathLength: 1 }}
@@ -56,8 +57,21 @@ function BlueprintSvgOverlay({ reduced }: { reduced: boolean }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.2, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       >
-        <line x1="80" y1="340" x2="420" y2="340" stroke="#C9A45C" strokeWidth="1" />
-        <text x="200" y="330" fill="#C9A45C" fontSize="12" fontFamily="monospace">
+        <line
+          x1="80"
+          y1="340"
+          x2="420"
+          y2="340"
+          stroke={color.maroon}
+          strokeWidth="1"
+        />
+        <text
+          x="200"
+          y="330"
+          fill={color.coolGrey}
+          fontSize="12"
+          fontFamily="monospace"
+        >
           3400 mm
         </text>
       </motion.g>
@@ -86,7 +100,6 @@ function CountUp({
     const duration = 1400
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / duration)
-      // mechanical ease-out
       const eased = 1 - Math.pow(1 - t, 3)
       setN(Math.round(value * eased))
       if (t < 1) raf = requestAnimationFrame(tick)
@@ -97,17 +110,18 @@ function CountUp({
 
   return (
     <div>
-      <p className="font-display text-3xl font-semibold text-bone tabular-nums md:text-4xl">
+      <p className="font-display text-3xl font-semibold text-snow tabular-nums md:text-4xl">
         {n}
         {label.includes('+') ? '+' : ''}
       </p>
-      <p className="mt-1 text-xs uppercase tracking-[0.08em] text-brass/80">
+      <p className="mt-1 text-xs uppercase tracking-[0.08em] text-cool-grey">
         {label.replace('+', '')}
       </p>
     </div>
   )
 }
 
+/** Maroon & Steel demo surface — Living Blueprint hero */
 export function HeroBlueprint() {
   const reduced = usePrefersReducedMotion()
   const ref = useRef<HTMLElement>(null)
@@ -148,14 +162,13 @@ export function HeroBlueprint() {
       ref={ref}
       aria-labelledby="home-hero-heading"
       data-cursor="crosshair"
-      className="relative isolate min-h-[min(100vh,960px)] overflow-hidden bg-abyss text-bone"
+      className="relative isolate min-h-[min(100vh,960px)] overflow-hidden bg-ink text-snow"
     >
       <div className="hero-mesh absolute inset-0" aria-hidden />
 
-      {/* Parallax blueprint grid */}
       <motion.div
         aria-hidden
-        className="absolute inset-[-10%] blueprint-grid opacity-60"
+        className="absolute inset-[-10%] blueprint-grid-dark opacity-70"
         style={
           reduced
             ? undefined
@@ -163,7 +176,6 @@ export function HeroBlueprint() {
         }
       />
 
-      {/* Photo base (fallback / atmosphere) */}
       <motion.div className="absolute inset-0" style={reduced ? undefined : { opacity: fade }}>
         <img
           src={homeHero.image.src}
@@ -172,12 +184,11 @@ export function HeroBlueprint() {
           fetchPriority="high"
           decoding="async"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-abyss via-abyss/90 to-pine/40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/92 to-wine/50" />
       </motion.div>
 
       <BlueprintSvgOverlay reduced={reduced} />
 
-      {/* WebGL layer — lazy, desktop-first wow */}
       {!reduced && webglReady ? (
         <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[55%] lg:block">
           <Suspense fallback={null}>
@@ -189,7 +200,7 @@ export function HeroBlueprint() {
       <div className="container-ae relative z-10 flex min-h-[min(100vh,960px)] flex-col justify-center py-24 md:py-28">
         <div className="max-w-3xl">
           <motion.p
-            className="text-xs font-medium uppercase tracking-[0.12em] text-brass"
+            className="text-xs font-medium uppercase tracking-[0.12em] text-maroon"
             initial={reduced ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
@@ -200,13 +211,13 @@ export function HeroBlueprint() {
           <div className="mt-5" id="home-hero-heading">
             <SplitHeading
               text={title}
-              className="font-display text-hero font-semibold tracking-tight text-bone"
+              className="font-display text-hero font-semibold tracking-tight text-snow"
               delay={0.15}
             />
           </div>
 
           <motion.p
-            className="mt-6 max-w-xl text-body-lg text-bone/80"
+            className="mt-6 max-w-xl text-body-lg text-cool-grey"
             initial={reduced ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.55, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -221,17 +232,13 @@ export function HeroBlueprint() {
             transition={{ delay: 0.75, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           >
             <Magnetic>
-              <ButtonLink to={primaryCta.href} data-cursor="pointer">
-                {primaryCta.label}
-              </ButtonLink>
+              <ButtonLink to={primaryCta.href}>{primaryCta.label}</ButtonLink>
             </Magnetic>
             <Magnetic strength={0.2}>
               <ButtonLink
                 to={secondaryCta.href}
-                variant="ghost"
-                className={cn(
-                  'border-brass/40 text-bone hover:border-brass hover:bg-white/5',
-                )}
+                variant="secondary"
+                className={cn('border-cool-grey text-snow hover:bg-steel hover:text-on-maroon')}
               >
                 {secondaryCta.label}
               </ButtonLink>
@@ -239,7 +246,7 @@ export function HeroBlueprint() {
           </motion.div>
 
           <motion.div
-            className="mt-14 grid max-w-lg grid-cols-3 gap-6 border-t border-brass/25 pt-8"
+            className="mt-14 grid max-w-lg grid-cols-3 gap-6 border-t border-cool-grey/30 pt-8"
             initial={reduced ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 0.5 }}

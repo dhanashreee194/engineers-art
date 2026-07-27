@@ -4,12 +4,12 @@ import { cn } from '@/lib/cn'
 
 const variants = {
   primary:
-    'bg-action text-on-action hover:bg-action-hover focus-visible:outline-focus shadow-sm',
+    'btn-primary shadow-sm focus-visible:outline-focus hover:bg-wine',
   secondary:
-    'bg-abyss text-bone hover:bg-pine focus-visible:outline-focus',
+    'bg-transparent text-steel border border-steel hover:bg-steel hover:text-on-maroon focus-visible:outline-focus',
   ghost:
-    'bg-transparent text-abyss border border-abyss/20 hover:border-abyss hover:bg-muted',
-  link: 'bg-transparent text-verdigris underline-offset-4 hover:underline px-0 h-auto',
+    'bg-transparent text-ink border border-cool-grey hover:border-steel hover:bg-white',
+  link: 'bg-transparent text-steel underline-offset-4 hover:underline px-0 h-auto',
 } as const
 
 const sizes = {
@@ -48,11 +48,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           'disabled:pointer-events-none disabled:opacity-50',
           variants[variant],
           variant !== 'link' && sizes[size],
+          /* Color AFTER size so it never loses to text-* font-size merge */
+          variant === 'primary' && 'text-on-maroon hover:text-on-maroon',
           className,
         )}
         {...props}
       >
-        {loading ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
+        {loading ? <Loader2 className="size-4 animate-spin text-on-maroon" aria-hidden /> : null}
         {children}
       </button>
     )
