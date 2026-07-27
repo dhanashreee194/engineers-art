@@ -108,6 +108,11 @@
   ::selection {
     @apply bg-copper-100 text-navy-950;
   }
+
+  html.blueprint-cursor-on,
+  html.blueprint-cursor-on * {
+    cursor: none !important;
+  }
 }
 
 @layer utilities {
@@ -137,4 +142,22 @@
   .glass-dark {
     @apply border border-white/10 bg-navy-950/55 shadow-sm backdrop-blur-[12px];
   }
+}
+
+/* Lenis smooth scroll (subset) */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
 }

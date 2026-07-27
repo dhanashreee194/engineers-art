@@ -1,4 +1,4 @@
-import type { ElementType, HTMLAttributes, ReactNode } from 'react'
+import type { HTMLAttributes, ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 
 export type SectionTone = 'light' | 'muted' | 'navy' | 'charcoal'
@@ -11,7 +11,7 @@ const toneClass: Record<SectionTone, string> = {
 }
 
 export type SectionProps = HTMLAttributes<HTMLElement> & {
-  as?: ElementType
+  as?: 'section' | 'div' | 'article'
   tone?: SectionTone
   contained?: boolean
   children: ReactNode
@@ -27,18 +27,10 @@ export function Section({
 }: SectionProps) {
   return (
     <Comp
-      className={cn(
-        'py-8 md:py-9 lg:py-10',
-        toneClass[tone],
-        className,
-      )}
+      className={cn('py-8 md:py-9 lg:py-10', toneClass[tone], className)}
       {...props}
     >
-      {contained ? (
-        <div className="container-ae">{children}</div>
-      ) : (
-        children
-      )}
+      {contained ? <div className="container-ae">{children}</div> : children}
     </Comp>
   )
 }

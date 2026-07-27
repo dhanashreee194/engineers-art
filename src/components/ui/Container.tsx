@@ -1,4 +1,4 @@
-import type { ElementType, HTMLAttributes, ReactNode } from 'react'
+import type { HTMLAttributes, ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 
 type Width = 'default' | 'narrow' | 'wide'
@@ -9,8 +9,8 @@ const widthClass: Record<Width, string> = {
   wide: 'container-ae-wide',
 }
 
-export type ContainerProps = HTMLAttributes<HTMLElement> & {
-  as?: ElementType
+export type ContainerProps = HTMLAttributes<HTMLDivElement> & {
+  as?: 'div' | 'section' | 'header' | 'footer' | 'main' | 'article'
   width?: Width
   children: ReactNode
 }

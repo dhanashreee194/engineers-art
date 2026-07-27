@@ -1,4 +1,4 @@
-import type { ElementType, HTMLAttributes, ReactNode } from 'react'
+import type { HTMLAttributes, ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 
 const variants = {
@@ -10,7 +10,7 @@ const variants = {
 } as const
 
 export type TextProps = HTMLAttributes<HTMLElement> & {
-  as?: ElementType
+  as?: 'p' | 'span' | 'div' | 'h2' | 'h3'
   variant?: keyof typeof variants
   children: ReactNode
 }

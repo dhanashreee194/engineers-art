@@ -1,4 +1,4 @@
-import type { ElementType, HTMLAttributes, ReactNode } from 'react'
+import type { HTMLAttributes, ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 
 const levelClass = {
@@ -8,7 +8,7 @@ const levelClass = {
 } as const
 
 export type HeadingProps = HTMLAttributes<HTMLHeadingElement> & {
-  as?: ElementType
+  as?: 'h1' | 'h2' | 'h3'
   level?: 1 | 2 | 3
   eyebrow?: string
   inverse?: boolean
@@ -24,7 +24,7 @@ export function Heading({
   children,
   ...props
 }: HeadingProps) {
-  const Comp = as ?? (`h${level}` as ElementType)
+  const Comp = as ?? (`h${level}` as 'h1' | 'h2' | 'h3')
 
   return (
     <div className={cn('space-y-3', className)}>

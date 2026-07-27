@@ -1,4 +1,6 @@
 export { HeroIndustrial } from '@/components/sections/HeroIndustrial'
+export { HeroBlueprint } from '@/components/sections/HeroBlueprint'
+export { ProcessBlueprint } from '@/components/sections/ProcessBlueprint'
 export { TrustBar } from '@/components/sections/TrustBar'
 export { AboutTeaser } from '@/components/sections/AboutTeaser'
 export { WhyUs } from '@/components/sections/WhyUs'
