@@ -24,6 +24,6 @@ npm run dev
 3. Design system spec ✓  
 4. Wireframes ✓  
 5. Design system in code ✓  
-6. Sections (next)  
-7. SEO / a11y / performance  
-8. Old vs new comparison  
+6. Sections ✓  
+7. SEO / a11y / performance ✓  
+8. Old vs new comparison ✓ (`docs/08-old-vs-new.md`)
