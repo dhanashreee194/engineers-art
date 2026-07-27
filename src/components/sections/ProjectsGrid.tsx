@@ -41,7 +41,7 @@ export function ProjectsGrid({ featured = true }: { featured?: boolean }) {
             >
               <Media
                 src={project.image}
-                alt=""
+                alt={`${project.title} — ${project.outcome}`}
                 aspect="3/2"
                 className="transition duration-300 group-hover:brightness-110"
               />

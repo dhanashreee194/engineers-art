@@ -37,7 +37,7 @@ export function ProjectsPage() {
                 to={`/projects/${project.slug}`}
                 className="group block focus-visible:outline-focus"
               >
-                <Media src={project.image} alt="" aspect="3/2" />
+                <Media src={project.image} alt={project.title} aspect="3/2" />
                 <Badge className="mt-4">{project.sector}</Badge>
                 <h2 className="mt-2 font-display text-xl font-semibold text-primary">
                   {project.title}

@@ -5,6 +5,8 @@ import { Text } from '@/components/ui/Text'
 import { Accordion } from '@/components/ui/Accordion'
 import { QuoteForm } from '@/components/forms/QuoteForm'
 import { FadeIn } from '@/components/motion/Reveal'
+import { JsonLd } from '@/components/seo/JsonLd'
+import { faqSchema } from '@/components/seo/schema'
 import { site } from '@/content/site'
 import { useSearchParams } from 'react-router-dom'
 import type { QuoteFormValues } from '@/lib/schemas/quote'
@@ -18,6 +20,24 @@ const intents: QuoteFormValues['intent'][] = [
   'other',
 ]
 
+const faqs = [
+  {
+    title: 'What information helps you quote faster?',
+    content:
+      'Product or capability needed, approximate sizes, quantity, finish preferences, location, and timeline.',
+  },
+  {
+    title: 'Do you customize beyond the catalog?',
+    content:
+      'Yes. Custom engineering is a core capability — share drawings or site constraints.',
+  },
+  {
+    title: 'Can we visit?',
+    content:
+      'Yes. Contact us to schedule a discussion at our Nashik location.',
+  },
+]
+
 export function ContactPage() {
   const [params] = useSearchParams()
   const raw = params.get('intent')
@@ -27,6 +47,7 @@ export function ContactPage() {
 
   return (
     <>
+      <JsonLd data={faqSchema(faqs)} />
       <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Contact' }]} />
 
       <Section tone="navy" className="blueprint-grid">
@@ -103,25 +124,7 @@ export function ContactPage() {
       <Section>
         <Heading level={2}>FAQ</Heading>
         <div className="mt-6 max-w-3xl">
-          <Accordion
-            items={[
-              {
-                title: 'What information helps you quote faster?',
-                content:
-                  'Product or capability needed, approximate sizes, quantity, finish preferences, location, and timeline.',
-              },
-              {
-                title: 'Do you customize beyond the catalog?',
-                content:
-                  'Yes. Custom engineering is a core capability — share drawings or site constraints.',
-              },
-              {
-                title: 'Can we visit?',
-                content:
-                  'Yes. Contact us to schedule a discussion at our Nashik location.',
-              },
-            ]}
-          />
+          <Accordion items={faqs} />
         </div>
       </Section>
     </>

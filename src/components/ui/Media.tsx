@@ -12,6 +12,8 @@ const aspects = {
 export type MediaProps = ImgHTMLAttributes<HTMLImageElement> & {
   aspect?: keyof typeof aspects
   rounded?: boolean
+  /** Use for LCP images above the fold */
+  priority?: boolean
 }
 
 export const Media = forwardRef<HTMLImageElement, MediaProps>(function Media(
@@ -19,9 +21,10 @@ export const Media = forwardRef<HTMLImageElement, MediaProps>(function Media(
     className,
     aspect = 'auto',
     rounded = true,
-    loading = 'lazy',
+    loading,
     decoding = 'async',
     alt,
+    priority = false,
     ...props
   },
   ref,
@@ -30,8 +33,9 @@ export const Media = forwardRef<HTMLImageElement, MediaProps>(function Media(
     <img
       ref={ref}
       alt={alt ?? ''}
-      loading={loading}
+      loading={priority ? 'eager' : (loading ?? 'lazy')}
       decoding={decoding}
+      fetchPriority={priority ? 'high' : undefined}
       className={cn(
         'h-full w-full object-cover',
         aspects[aspect],

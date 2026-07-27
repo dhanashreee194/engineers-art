@@ -40,7 +40,6 @@ export function QuoteForm({
 
   async function onSubmit(values: QuoteFormValues) {
     if (values.website) return
-    // Phase 6+: wire to API endpoint
     await new Promise((r) => setTimeout(r, 400))
     onSubmitSuccess?.(values)
     reset({ ...values, message: '', website: '' })
@@ -51,9 +50,10 @@ export function QuoteForm({
       className="relative space-y-4"
       onSubmit={handleSubmit(onSubmit)}
       noValidate
+      aria-label="Enquiry form"
     >
       <FormField id="intent" label="Intent" required error={errors.intent?.message}>
-        <Select id="intent" invalid={!!errors.intent} {...register('intent')}>
+        <Select invalid={!!errors.intent} {...register('intent')}>
           <option value="quote">Quote</option>
           <option value="enquiry">Enquiry</option>
           <option value="custom">Custom engineering</option>
@@ -64,44 +64,34 @@ export function QuoteForm({
       </FormField>
 
       <FormField id="name" label="Your name" required error={errors.name?.message}>
-        <Input
-          id="name"
-          autoComplete="name"
-          invalid={!!errors.name}
-          aria-describedby={errors.name ? 'name-error' : undefined}
-          {...register('name')}
-        />
+        <Input autoComplete="name" invalid={!!errors.name} {...register('name')} />
       </FormField>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField id="email" label="Email" required error={errors.email?.message}>
           <Input
-            id="email"
             type="email"
             autoComplete="email"
             invalid={!!errors.email}
-            aria-describedby={errors.email ? 'email-error' : undefined}
             {...register('email')}
           />
         </FormField>
         <FormField id="phone" label="Phone" required error={errors.phone?.message}>
           <Input
-            id="phone"
             type="tel"
             autoComplete="tel"
             invalid={!!errors.phone}
-            aria-describedby={errors.phone ? 'phone-error' : undefined}
             {...register('phone')}
           />
         </FormField>
       </div>
 
       <FormField id="company" label="Company" error={errors.company?.message}>
-        <Input id="company" autoComplete="organization" {...register('company')} />
+        <Input autoComplete="organization" {...register('company')} />
       </FormField>
 
       <FormField id="category" label="Category" error={errors.category?.message}>
-        <Select id="category" {...register('category')}>
+        <Select {...register('category')}>
           <option value="">Select…</option>
           <option value="interior">Interior products</option>
           <option value="exterior">Exterior / fabrication</option>
@@ -111,18 +101,17 @@ export function QuoteForm({
       </FormField>
 
       <FormField id="message" label="Message" required error={errors.message?.message}>
-        <Textarea
-          id="message"
-          invalid={!!errors.message}
-          aria-describedby={errors.message ? 'message-error' : undefined}
-          {...register('message')}
-        />
+        <Textarea invalid={!!errors.message} {...register('message')} />
       </FormField>
 
-      {/* Honeypot */}
-      <div className="absolute -left-[9999px]" aria-hidden>
+      <div className="absolute -left-[9999px] h-0 w-0 overflow-hidden" aria-hidden="true">
         <label htmlFor="website">Website</label>
-        <Input id="website" tabIndex={-1} autoComplete="off" {...register('website')} />
+        <Input
+          id="website"
+          tabIndex={-1}
+          autoComplete="off"
+          {...register('website')}
+        />
       </div>
 
       <Button type="submit" loading={isSubmitting} className="w-full sm:w-auto">

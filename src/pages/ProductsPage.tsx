@@ -40,7 +40,7 @@ export function ProductsPage() {
                 to={cat.href}
                 className="group block focus-visible:outline-focus"
               >
-                <Media src={cat.image} alt="" aspect="4/3" />
+                <Media src={cat.image} alt={cat.title} aspect="4/3" />
                 <h2 className="mt-4 font-display text-2xl font-semibold text-primary group-hover:text-navy-800">
                   {cat.title}
                 </h2>

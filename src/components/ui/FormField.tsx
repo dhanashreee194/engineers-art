@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { Children, cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react'
 import { Label } from '@/components/ui/Label'
 import { FieldError } from '@/components/ui/FieldError'
 import { cn } from '@/lib/cn'
@@ -24,7 +24,18 @@ export function FormField({
 }: FormFieldProps) {
   const descriptionId = description ? `${id}-description` : undefined
   const errorId = error ? `${id}-error` : undefined
-  const describedBy = [descriptionId, errorId].filter(Boolean).join(' ') || undefined
+  const describedBy =
+    [descriptionId, errorId].filter(Boolean).join(' ') || undefined
+
+  const control = Children.map(children, (child) => {
+    if (!isValidElement(child)) return child
+    return cloneElement(child as ReactElement<Record<string, unknown>>, {
+      id,
+      'aria-invalid': error ? true : undefined,
+      'aria-describedby': describedBy,
+      'aria-required': required || undefined,
+    })
+  })
 
   return (
     <div className={cn('w-full', className)}>
@@ -36,12 +47,7 @@ export function FormField({
           {description}
         </p>
       ) : null}
-      <div
-        data-describedby={describedBy}
-        className="[&_[aria-describedby]]:contents"
-      >
-        {children}
-      </div>
+      {control}
       <FieldError id={errorId}>{error}</FieldError>
     </div>
   )
