@@ -18,8 +18,7 @@
 
 ## Motion assets
 
-- `docs/motion-demo/living-blueprint-demo.webm`
-- `docs/motion-demo/living-blueprint-demo.gif`
+- `docs/motion-demo/living-blueprint-demo.webm` (~13s)
 - `docs/motion-demo/hero-still.png`
 - `docs/motion-demo/process-still.png`
 
