@@ -4,9 +4,9 @@ import { useState } from 'react'
 import { ButtonLink } from '@/components/ui/ButtonLink'
 import { Container } from '@/components/ui/Container'
 import { cn } from '@/lib/cn'
+import { site } from '@/content/site'
 
 const nav = [
-  { to: '/', label: 'Home' },
   { to: '/about', label: 'About' },
   { to: '/capabilities', label: 'Capabilities' },
   { to: '/products', label: 'Products' },
@@ -26,7 +26,7 @@ export function SiteHeader() {
           to="/"
           className="font-display text-lg font-semibold tracking-tight text-navy-950 focus-visible:outline-focus"
         >
-          Artistic Engineers
+          {site.name}
         </NavLink>
 
         <nav aria-label="Primary" className="hidden items-center gap-1 xl:flex">
@@ -48,7 +48,7 @@ export function SiteHeader() {
 
         <div className="hidden items-center gap-2 md:flex">
           <a
-            href="tel:+918766526860"
+            href={`tel:${site.phoneTel}`}
             className="inline-flex h-11 items-center gap-2 rounded-md px-3 text-sm font-medium text-navy-950 hover:bg-grey-50 focus-visible:outline-focus"
           >
             <Phone className="size-4" aria-hidden />
