@@ -56,12 +56,12 @@ export function ProcessBlueprint() {
           >
             <path
               d="M40 60 H960"
-              stroke="#e8ecf1"
+              stroke="#d6d1c8"
               strokeWidth="2"
             />
             <motion.path
               d="M40 60 H960"
-              stroke="#c45c26"
+              stroke="#E0632A"
               strokeWidth="2.5"
               style={reduced ? { pathLength: 1 } : { pathLength }}
               strokeLinecap="square"
@@ -71,22 +71,22 @@ export function ProcessBlueprint() {
                 key={x}
                 style={reduced ? undefined : { opacity: calloutOpacity }}
               >
-                <circle cx={x} cy={60} r="5" fill="#0b1f33" />
-                <circle cx={x} cy={60} r="3" fill="#c45c26" />
+                <circle cx={x} cy={60} r="5" fill="#06231F" />
+                <circle cx={x} cy={60} r="3" fill="#E0632A" />
                 <line
                   x1={x}
                   y1={20}
                   x2={x}
                   y2={48}
-                  stroke="#1f6feb"
+                  stroke="#C9A45C"
                   strokeWidth="1"
-                  opacity={0.5}
+                  opacity={0.7}
                 />
                 <text
                   x={x}
                   y={14}
                   textAnchor="middle"
-                  className="fill-copper-600"
+                  fill="#E0632A"
                   fontSize="11"
                   fontFamily="ui-monospace, monospace"
                 >

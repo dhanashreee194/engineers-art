@@ -54,25 +54,25 @@ function BlueprintFrame({ pointer }: { pointer: React.MutableRefObject<{ x: numb
 
   return (
     <group ref={group} position={[0.9, 0.1, 0]}>
-      <Line points={edges} color="#7eb6ff" lineWidth={1.2} transparent opacity={0.75} />
+      <Line points={edges} color="#C9A45C" lineWidth={1.2} transparent opacity={0.8} />
       {gridLines.map((pts, i) => (
         <Line
           key={i}
           points={pts as [number, number, number][]}
-          color="#2a4a6e"
+          color="#2E7D6E"
           lineWidth={0.6}
           transparent
-          opacity={0.45}
+          opacity={0.4}
           position={[0, -1.4, 0]}
         />
       ))}
       <mesh>
         <boxGeometry args={[1.2, 1.2, 1.2]} />
-        <meshBasicMaterial color="#c45c26" wireframe transparent opacity={0.55} />
+        <meshBasicMaterial color="#E0632A" wireframe transparent opacity={0.55} />
       </mesh>
       <mesh position={[0.55, 0.55, 0.55]}>
         <boxGeometry args={[0.35, 0.35, 0.35]} />
-        <meshBasicMaterial color="#d96b32" wireframe transparent opacity={0.8} />
+        <meshBasicMaterial color="#C9A45C" wireframe transparent opacity={0.85} />
       </mesh>
     </group>
   )

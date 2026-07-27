@@ -15,6 +15,49 @@ import {
 } from '@/components/ui'
 import { QuoteForm } from '@/components/forms/QuoteForm'
 
+const options = [
+  {
+    id: 'A',
+    name: 'Graphite & Chartreuse',
+    feel: 'Industrial-tech, high-energy accent. Ownable via chartreuse.',
+    swatches: [
+      { name: 'Ink', hex: '#0E1116', note: 'Dark base' },
+      { name: 'Graphite', hex: '#1C222B', note: 'Dark cards' },
+      { name: 'Steel', hex: '#3A4552', note: 'Borders / muted' },
+      { name: 'Fog', hex: '#F4F6F8', note: 'Light bg' },
+      { name: 'Signal', hex: '#C6F135', note: 'CTA / data (≤10%)' },
+      { name: 'Copper', hex: '#B06B3A', note: 'Warm secondary' },
+    ],
+  },
+  {
+    id: 'B',
+    name: 'Deep Teal & Molten Copper',
+    feel: 'Premium materials — patina + molten metal. Selected.',
+    selected: true,
+    swatches: [
+      { name: 'Abyss', hex: '#06231F', note: 'Dark base' },
+      { name: 'Pine', hex: '#0F3D35', note: 'Dark surfaces' },
+      { name: 'Verdigris', hex: '#2E7D6E', note: 'Links / oxidized' },
+      { name: 'Bone', hex: '#F3F1EC', note: 'Light bg (60%)' },
+      { name: 'Molten', hex: '#E0632A', note: 'Accent (≤10%)' },
+      { name: 'Brass', hex: '#C9A45C', note: 'Blueprint lines' },
+    ],
+  },
+  {
+    id: 'C',
+    name: 'Slate & Ion Blue + Amber',
+    feel: 'Restrained; fresher than navy defaults. Safest politically.',
+    swatches: [
+      { name: 'Onyx', hex: '#14171C', note: 'Dark base' },
+      { name: 'Slate', hex: '#2A2F38', note: 'Dark surfaces' },
+      { name: 'Mist', hex: '#EEF1F4', note: 'Light bg' },
+      { name: 'Ion', hex: '#4D7CFE', note: 'Electric blue' },
+      { name: 'Amber', hex: '#F5A524', note: 'Warm accent' },
+      { name: 'Aluminum', hex: '#9AA3AE', note: 'Metallic mute' },
+    ],
+  },
+] as const
+
 export function DesignSystemPage() {
   return (
     <>
@@ -26,58 +69,85 @@ export function DesignSystemPage() {
       />
 
       <Section tone="navy" className="!py-8 md:!py-9">
-        <Heading level={1} inverse eyebrow="Phase 5">
-          Design system
+        <Heading level={1} inverse eyebrow="Color system">
+          Deep Teal & Molten Copper
         </Heading>
         <Text variant="inverse" className="mt-4 max-w-2xl">
-          Tokens, primitives, layout chrome, and form foundations for Artistic
-          Engineers — Modern Industrial Luxury.
+          Option B selected — materials-driven, ownable, WCAG-audited. Living
+          Blueprint lines use Brass; CTAs use Molten with Abyss type.
         </Text>
         <div className="mt-8 flex flex-wrap gap-3">
           <ButtonLink to="/contact?intent=quote">Request Quote</ButtonLink>
-          <ButtonLink to="/" variant="ghost" className="border-white/30 text-white hover:bg-white/10 hover:border-white/50">
+          <ButtonLink
+            to="/"
+            variant="ghost"
+            className="border-brass/40 text-bone hover:border-brass hover:bg-white/5"
+          >
             Back to Home
           </ButtonLink>
         </div>
       </Section>
 
       <Section>
-        <Heading level={2} eyebrow="Color">
-          Palette
+        <Heading level={2} eyebrow="Options">
+          Palette proposals
         </Heading>
-        <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Swatch name="Navy 950" className="bg-navy-950" />
-          <Swatch name="Blue 600" className="bg-blue-600" />
-          <Swatch name="Copper 600" className="bg-copper-600" />
-          <Swatch name="Charcoal 900" className="bg-charcoal-900" />
-          <Swatch name="Grey 50" className="bg-grey-50 text-primary" light />
-          <Swatch name="Grey 500" className="bg-grey-500" />
-          <Swatch name="Success" className="bg-success" />
-          <Swatch name="Error" className="bg-error" />
+        <div className="mt-10 space-y-12">
+          {options.map((opt) => (
+            <div
+              key={opt.id}
+              className={
+                'selected' in opt && opt.selected
+                  ? 'rounded-lg border-2 border-molten p-6'
+                  : 'rounded-lg border border-border p-6'
+              }
+            >
+              <div className="flex flex-wrap items-baseline justify-between gap-3">
+                <h3 className="font-display text-2xl font-semibold text-primary">
+                  Option {opt.id} — {opt.name}
+                </h3>
+                {'selected' in opt && opt.selected ? (
+                  <Badge tone="copper">Selected</Badge>
+                ) : null}
+              </div>
+              <Text className="mt-2 max-w-2xl">{opt.feel}</Text>
+              <div className="mt-6 grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
+                {opt.swatches.map((s) => (
+                  <div key={s.hex} className="space-y-2">
+                    <div
+                      className="h-20 rounded-md border border-border"
+                      style={{ backgroundColor: s.hex }}
+                    />
+                    <p className="text-sm font-medium text-primary">{s.name}</p>
+                    <p className="font-mono text-xs text-subtle">{s.hex}</p>
+                    <p className="text-xs text-subtle">{s.note}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </Section>
 
       <Section tone="muted">
-        <Heading level={2} eyebrow="Typography">
-          Type scale
+        <Heading level={2} eyebrow="Active tokens">
+          Semantic map (Option B)
         </Heading>
-        <div className="mt-8 space-y-6">
-          <p className="font-display text-hero font-semibold text-primary">
-            Hero — Space Grotesk
-          </p>
-          <Heading level={1}>Heading 1</Heading>
-          <Heading level={2}>Heading 2</Heading>
-          <Heading level={3}>Heading 3</Heading>
-          <Text variant="subhead">Subhead — engineering clarity</Text>
-          <Text variant="lead">
-            Lead body for supporting sentences under section titles.
-          </Text>
-          <Text>
-            Body copy at 16–18px with comfortable line height for long-form trust
-            content and specifications.
-          </Text>
-          <Text variant="muted">Muted meta and secondary labels.</Text>
+        <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <Swatch name="bg / page" className="bg-page text-primary" light />
+          <Swatch name="surface-alt" className="bg-muted text-primary" light />
+          <Swatch name="inverse / abyss" className="bg-abyss" />
+          <Swatch name="dark / pine" className="bg-pine" />
+          <Swatch name="accent / molten" className="bg-molten text-abyss" />
+          <Swatch name="brass" className="bg-brass text-abyss" />
+          <Swatch name="verdigris" className="bg-verdigris" />
+          <Swatch name="hero mesh" className="hero-mesh" />
         </div>
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          <div className="metallic-brass h-16 rounded-md" aria-hidden />
+          <div className="metallic-molten h-16 rounded-md" aria-hidden />
+        </div>
+        <Text className="mt-3 text-sm">Metallic brass + molten gradient tokens</Text>
       </Section>
 
       <Section>
@@ -90,8 +160,8 @@ export function DesignSystemPage() {
           <Button variant="ghost">Ghost</Button>
           <Button loading>Loading</Button>
           <Badge>Neutral</Badge>
-          <Badge tone="copper">Copper</Badge>
-          <Badge tone="navy">Navy</Badge>
+          <Badge tone="copper">Molten</Badge>
+          <Badge tone="navy">Teal</Badge>
         </div>
 
         <Divider className="my-10" label="Cards" />
@@ -103,7 +173,7 @@ export function DesignSystemPage() {
             { icon: ShieldCheck, title: 'Quality', body: 'Inspection discipline.' },
           ].map((item) => (
             <Card key={item.title} interactive>
-              <item.icon className="size-6 text-copper-600" aria-hidden />
+              <item.icon className="size-6 text-molten" aria-hidden />
               <h3 className="mt-4 font-display text-xl font-semibold text-primary">
                 {item.title}
               </h3>
@@ -117,10 +187,10 @@ export function DesignSystemPage() {
         <Heading level={2} eyebrow="Forms">
           Quote form
         </Heading>
-        <Text className="mt-3 max-w-xl">
-          React Hook Form + Zod with accessible labels, errors, and honeypot.
-        </Text>
-        <Container width="narrow" className="mt-8 rounded-lg border border-border bg-page p-6 !px-6">
+        <Container
+          width="narrow"
+          className="mt-8 rounded-lg border border-border bg-page p-6 !px-6"
+        >
           <QuoteForm />
         </Container>
       </Section>
@@ -145,7 +215,6 @@ export function DesignSystemPage() {
             ]}
           />
         </div>
-
         <div className="mt-10">
           <Text variant="muted" className="mb-2">
             Focusable input sample
@@ -168,7 +237,7 @@ function Swatch({
 }) {
   return (
     <div
-      className={`flex h-24 items-end rounded-md p-3 text-sm font-medium ${light ? 'border border-border text-primary' : 'text-white'} ${className}`}
+      className={`flex h-24 items-end rounded-md p-3 text-sm font-medium ${light ? 'border border-border text-primary' : 'text-bone'} ${className}`}
     >
       {name}
     </div>

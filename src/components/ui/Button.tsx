@@ -4,12 +4,12 @@ import { cn } from '@/lib/cn'
 
 const variants = {
   primary:
-    'bg-action text-white hover:bg-action-hover focus-visible:outline-focus shadow-sm',
+    'bg-action text-on-action hover:bg-action-hover focus-visible:outline-focus shadow-sm',
   secondary:
-    'bg-navy-950 text-white hover:bg-navy-800 focus-visible:outline-focus',
+    'bg-abyss text-bone hover:bg-pine focus-visible:outline-focus',
   ghost:
-    'bg-transparent text-navy-950 border border-navy-950/20 hover:border-navy-950 hover:bg-grey-50',
-  link: 'bg-transparent text-blue-600 underline-offset-4 hover:underline px-0 h-auto',
+    'bg-transparent text-abyss border border-abyss/20 hover:border-abyss hover:bg-muted',
+  link: 'bg-transparent text-verdigris underline-offset-4 hover:underline px-0 h-auto',
 } as const
 
 const sizes = {

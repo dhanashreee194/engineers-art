@@ -27,7 +27,7 @@ export function ContactBand() {
             href={contactBand.secondaryCta.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex h-11 items-center justify-center rounded-md border border-white/30 px-5 text-body font-medium text-white transition hover:border-white/50 hover:bg-white/10 focus-visible:outline-focus"
+            className="inline-flex h-11 items-center justify-center rounded-md border border-brass/40 px-5 text-body font-medium text-bone transition hover:border-brass hover:bg-white/5 focus-visible:outline-focus"
           >
             {contactBand.secondaryCta.label}
           </a>

@@ -3,11 +3,11 @@ import { cn } from '@/lib/cn'
 
 const variants = {
   primary:
-    'bg-action text-white hover:bg-action-hover focus-visible:outline-focus shadow-sm',
+    'bg-action text-on-action hover:bg-action-hover focus-visible:outline-focus shadow-sm',
   secondary:
-    'bg-navy-950 text-white hover:bg-navy-800 focus-visible:outline-focus',
+    'bg-abyss text-bone hover:bg-pine focus-visible:outline-focus',
   ghost:
-    'bg-transparent text-navy-950 border border-navy-950/20 hover:border-navy-950 hover:bg-grey-50',
+    'bg-transparent text-abyss border border-abyss/20 hover:border-abyss hover:bg-muted',
 } as const
 
 const sizes = {

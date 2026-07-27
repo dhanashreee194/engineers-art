@@ -6,8 +6,8 @@ export type SectionTone = 'light' | 'muted' | 'navy' | 'charcoal'
 const toneClass: Record<SectionTone, string> = {
   light: 'bg-page text-secondary',
   muted: 'bg-muted text-secondary',
-  navy: 'bg-navy-950 text-white blueprint-grid',
-  charcoal: 'bg-charcoal-900 text-white',
+  navy: 'bg-abyss text-bone blueprint-grid',
+  charcoal: 'bg-pine text-bone',
 }
 
 export type SectionProps = HTMLAttributes<HTMLElement> & {

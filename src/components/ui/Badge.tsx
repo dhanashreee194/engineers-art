@@ -7,10 +7,10 @@ export type BadgeProps = HTMLAttributes<HTMLSpanElement> & {
 }
 
 const tones = {
-  neutral: 'bg-grey-100 text-grey-700',
-  copper: 'bg-copper-100 text-copper-600',
-  navy: 'bg-navy-950/5 text-navy-950',
-  inverse: 'bg-white/10 text-white',
+  neutral: 'bg-muted text-primary',
+  copper: 'bg-copper-100 text-abyss',
+  navy: 'bg-pine/10 text-abyss',
+  inverse: 'bg-bone/10 text-bone',
 } as const
 
 export function Badge({
