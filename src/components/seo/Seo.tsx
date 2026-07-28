@@ -38,7 +38,7 @@ export function Seo({
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />
 
-      <meta name="theme-color" content="#822C38" />
+      <meta name="theme-color" content="#111111" />
     </Helmet>
   )
 }

@@ -48,13 +48,15 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           'disabled:pointer-events-none disabled:opacity-50',
           variants[variant],
           variant !== 'link' && sizes[size],
-          /* Color AFTER size so it never loses to text-* font-size merge */
+          /* White on black — AFTER size so merge never drops label color */
           variant === 'primary' && 'text-on-maroon hover:text-on-maroon',
           className,
         )}
         {...props}
       >
-        {loading ? <Loader2 className="size-4 animate-spin text-on-maroon" aria-hidden /> : null}
+        {loading ? (
+          <Loader2 className="size-4 animate-spin text-on-maroon" aria-hidden />
+        ) : null}
         {children}
       </button>
     )

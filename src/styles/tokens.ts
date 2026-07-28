@@ -1,17 +1,18 @@
 /**
- * Maroon & Steel — single source for non-CSS contexts (WebGL, canvas).
+ * Black & White — single source for non-CSS contexts (WebGL, canvas).
  * Keep in sync with `src/index.css` @theme primitives.
+ * Token keys match Maroon & Steel for component compatibility.
  */
 export const color = {
-  ink: '#1C2023',
-  wine: '#5C1C27',
-  maroon: '#822C38',
-  steel: '#5E7079',
-  coolGrey: '#C6CBCE',
-  snow: '#F4F3F1',
-  white: '#FCFBFA',
-  /** Cream label on maroon / wine fills — never ink or steel */
-  onMaroon: '#FCFBFA',
+  ink: '#111111',
+  wine: '#000000',
+  maroon: '#111111',
+  steel: '#5C5C5C',
+  coolGrey: '#D4D4D4',
+  snow: '#F5F5F5',
+  white: '#FFFFFF',
+  /** White label on black fills — never ink or steel */
+  onMaroon: '#FFFFFF',
 } as const
 
 export type BrandColor = keyof typeof color

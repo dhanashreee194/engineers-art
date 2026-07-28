@@ -121,7 +121,7 @@ function CountUp({
   )
 }
 
-/** Maroon & Steel demo surface — Living Blueprint hero */
+/** Black & White Living Blueprint hero */
 export function HeroBlueprint() {
   const reduced = usePrefersReducedMotion()
   const ref = useRef<HTMLElement>(null)

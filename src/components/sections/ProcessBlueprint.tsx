@@ -16,7 +16,7 @@ import { color } from '@/styles/tokens'
 import { cn } from '@/lib/cn'
 
 /**
- * Flagship Maroon & Steel + Living Blueprint process path.
+ * Flagship Black & White + Living Blueprint process path.
  */
 export function ProcessBlueprint() {
   const reduced = usePrefersReducedMotion()
