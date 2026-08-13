@@ -1,57 +1,59 @@
 @import 'tailwindcss';
 
 @theme {
-  /* ── Black & White primitives (token names kept for component compatibility) ── */
-  --color-ink: #111111;
-  --color-wine: #000000;
-  --color-maroon: #111111;
-  --color-steel: #5c5c5c;
-  --color-cool-grey: #d4d4d4;
-  --color-snow: #f5f5f5;
+  /* ── Architect's studio (light) — token names kept for component compatibility ── */
+  --color-ink: #141414;
+  --color-wine: #2a2926;
+  --color-maroon: #141414;
+  --color-steel: #5a5a55;
+  --color-cool-grey: #e2dfd8;
+  --color-snow: #f7f6f3;
   --color-white: #ffffff;
+  /* Technical drawing stroke (WebGL/SVG) */
+  --color-wire: #1e1e1e;
 
   /* Semantic */
-  --color-page: #f5f5f5;
+  --color-page: #f7f6f3;
   --color-muted: #ffffff;
   --color-surface: #ffffff;
-  --color-inverse: #000000;
-  --color-dark: #111111;
-  --color-primary: #111111;
-  --color-secondary: #5c5c5c;
-  --color-subtle: #5c5c5c;
-  --color-action: #111111;
-  --color-action-hover: #000000;
-  /* White label on black fills — never ink/steel on these fills */
-  --color-on-maroon: #ffffff;
-  --color-on-action: #ffffff;
-  --color-border: #d4d4d4;
-  --color-focus: #111111;
+  --color-inverse: #141414;
+  --color-dark: #141414;
+  --color-primary: #141414;
+  --color-secondary: #5a5a55;
+  --color-subtle: #5a5a55;
+  --color-action: #141414;
+  --color-action-hover: #2a2926;
+  /* Paper label on accent fills — never steel/grey on the fill */
+  --color-on-maroon: #f7f6f3;
+  --color-on-action: #f7f6f3;
+  --color-border: #e2dfd8;
+  --color-focus: #141414;
   --color-success: #2f6b4f;
   --color-error: #9b2c2c;
 
-  /* Legacy class aliases → Black & White */
-  --color-navy-950: #111111;
-  --color-navy-900: #000000;
-  --color-navy-800: #111111;
-  --color-blue-600: #5c5c5c;
-  --color-blue-500: #5c5c5c;
-  --color-copper-600: #111111;
-  --color-copper-500: #000000;
-  --color-copper-100: #e8e8e8;
-  --color-charcoal-900: #111111;
-  --color-charcoal-800: #000000;
-  --color-grey-50: #f5f5f5;
+  /* Legacy class aliases → Architect's studio light */
+  --color-navy-950: #141414;
+  --color-navy-900: #2a2926;
+  --color-navy-800: #141414;
+  --color-blue-600: #5a5a55;
+  --color-blue-500: #5a5a55;
+  --color-copper-600: #141414;
+  --color-copper-500: #2a2926;
+  --color-copper-100: #ebe8e2;
+  --color-charcoal-900: #141414;
+  --color-charcoal-800: #2a2926;
+  --color-grey-50: #f7f6f3;
   --color-grey-100: #ffffff;
-  --color-grey-300: #d4d4d4;
-  --color-grey-500: #5c5c5c;
-  --color-grey-700: #111111;
-  --color-abyss: #111111;
-  --color-pine: #000000;
-  --color-verdigris: #5c5c5c;
-  --color-bone: #f5f5f5;
-  --color-molten: #111111;
-  --color-molten-hover: #000000;
-  --color-brass: #d4d4d4;
+  --color-grey-300: #e2dfd8;
+  --color-grey-500: #5a5a55;
+  --color-grey-700: #141414;
+  --color-abyss: #141414;
+  --color-pine: #2a2926;
+  --color-verdigris: #5a5a55;
+  --color-bone: #f7f6f3;
+  --color-molten: #141414;
+  --color-molten-hover: #2a2926;
+  --color-brass: #e2dfd8;
 
   /* Typography */
   --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
@@ -94,8 +96,8 @@
 
   /* Motion */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.08);
-  --shadow-md: 0 8px 24px rgb(0 0 0 / 0.12);
+  --shadow-sm: 0 1px 2px rgb(20 20 20 / 0.05);
+  --shadow-md: 0 8px 24px rgb(20 20 20 / 0.08);
 }
 
 @layer base {
@@ -126,7 +128,7 @@
   }
 
   ::selection {
-    @apply bg-maroon/15 text-ink;
+    @apply bg-maroon/10 text-ink;
   }
 
   html.blueprint-cursor-on,
@@ -148,27 +150,29 @@
     @apply mx-auto w-full max-w-[var(--container-wide)] px-4 sm:px-6 lg:px-8;
   }
 
-  /* Blueprint grids — cool-grey on snow, steel on black */
+  /* Blueprint grids — hairline on paper */
   .blueprint-grid {
     background-image:
-      linear-gradient(color-mix(in srgb, var(--color-cool-grey) 55%, transparent) 1px, transparent 1px),
-      linear-gradient(90deg, color-mix(in srgb, var(--color-cool-grey) 55%, transparent) 1px, transparent 1px);
+      linear-gradient(color-mix(in srgb, var(--color-cool-grey) 70%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--color-cool-grey) 70%, transparent) 1px, transparent 1px);
     background-size: 48px 48px;
   }
 
+  /* Alias kept — light studio uses soft graphite lines on paper */
   .blueprint-grid-dark {
     background-image:
-      linear-gradient(color-mix(in srgb, var(--color-steel) 35%, transparent) 1px, transparent 1px),
-      linear-gradient(90deg, color-mix(in srgb, var(--color-steel) 35%, transparent) 1px, transparent 1px);
+      linear-gradient(color-mix(in srgb, var(--color-wire) 14%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--color-wire) 14%, transparent) 1px, transparent 1px);
     background-size: 48px 48px;
   }
 
+  /* Light paper atmosphere (was near-black mesh) */
   .hero-mesh {
     background:
-      radial-gradient(ellipse 80% 55% at 12% 40%, color-mix(in srgb, var(--color-maroon) 35%, transparent), transparent 55%),
-      radial-gradient(ellipse 60% 45% at 88% 25%, color-mix(in srgb, var(--color-steel) 28%, transparent), transparent 50%),
-      radial-gradient(ellipse 50% 40% at 55% 85%, color-mix(in srgb, var(--color-wine) 50%, transparent), transparent 45%),
-      var(--color-ink);
+      radial-gradient(ellipse 80% 55% at 12% 40%, color-mix(in srgb, var(--color-wire) 6%, transparent), transparent 55%),
+      radial-gradient(ellipse 60% 45% at 88% 25%, color-mix(in srgb, var(--color-steel) 8%, transparent), transparent 50%),
+      radial-gradient(ellipse 50% 40% at 55% 85%, color-mix(in srgb, var(--color-cool-grey) 45%, transparent), transparent 45%),
+      var(--color-snow);
   }
 
   .glass-light {
@@ -176,24 +180,23 @@
   }
 
   .glass-dark {
-    @apply border border-cool-grey/20 bg-wine/70 shadow-sm backdrop-blur-[12px];
+    @apply border border-cool-grey bg-white/90 shadow-sm backdrop-blur-[12px];
   }
 
-  /* White labels on black fills — never inherit mid-grey body text */
   .text-on-maroon,
   .text-on-action {
     color: var(--color-on-maroon);
   }
 
   .btn-primary {
-    background-color: var(--color-maroon);
-    color: var(--color-on-maroon);
+    background-color: var(--color-action);
+    color: var(--color-on-action);
     font-weight: 500;
   }
 
   .btn-primary:hover {
-    background-color: var(--color-wine);
-    color: var(--color-on-maroon);
+    background-color: var(--color-action-hover);
+    color: var(--color-on-action);
   }
 }
 

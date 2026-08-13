@@ -11,7 +11,7 @@ import { Magnetic } from '@/components/motion/Magnetic'
 import { SplitHeading } from '@/components/motion/SplitHeading'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import { homeHero } from '@/content/home'
-import { color } from '@/styles/tokens'
+import { color, wireOpacity } from '@/styles/tokens'
 import { cn } from '@/lib/cn'
 
 const BlueprintScene = lazy(() =>
@@ -20,59 +20,103 @@ const BlueprintScene = lazy(() =>
   })),
 )
 
-function BlueprintSvgOverlay({ reduced }: { reduced: boolean }) {
+/** Floor-plan + elevation line sketches — interior design, not structural */
+function InteriorSvgOverlay({ reduced }: { reduced: boolean }) {
   return (
     <svg
-      className="pointer-events-none absolute inset-0 h-full w-full opacity-50"
+      className="pointer-events-none absolute inset-0 h-full w-full"
       viewBox="0 0 1440 900"
       fill="none"
       aria-hidden
     >
+      {/* Living floor plan (left) */}
       <motion.path
-        d="M80 120 H420 M80 120 V320 M420 120 V200 H560"
-        stroke={color.steel}
-        strokeWidth="1"
-        initial={reduced ? false : { pathLength: 0, opacity: 0.25 }}
-        animate={{ pathLength: 1, opacity: 0.85 }}
-        transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+        d="M90 160 H380 V420 H90 Z M90 290 H380 M220 160 V420 M140 320 H200 V380 H140 Z M250 200 H340 V280 H250 Z"
+        stroke={color.wire}
+        strokeWidth="1.1"
+        strokeLinejoin="round"
+        opacity={wireOpacity.mid}
+        initial={reduced ? false : { pathLength: 0, opacity: 0.1 }}
+        animate={{ pathLength: 1, opacity: wireOpacity.mid }}
+        transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
       />
-      <motion.path
-        d="M980 160 H1320 M1320 160 V380 M1180 380 H1320"
-        stroke={color.maroon}
-        strokeWidth="1.2"
+      <motion.circle
+        cx="300"
+        cy="340"
+        r="28"
+        stroke={color.wire}
+        strokeWidth="1"
+        opacity={wireOpacity.faint}
         initial={reduced ? false : { pathLength: 0 }}
         animate={{ pathLength: 1 }}
-        transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1], delay: 0.45 }}
+        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.7 }}
       />
+
+      {/* Room elevation (right) — sofa + window wall */}
       <motion.path
-        d="M120 720 H360 M240 680 V760 M1000 640 H1280 M1140 600 V720"
-        stroke={color.coolGrey}
-        strokeWidth="1"
+        d="M980 180 H1320 V480 H980 Z M1040 260 H1260 V360 H1040 Z M1080 220 H1220 V260 M1140 180 V220"
+        stroke={color.wire}
+        strokeWidth="1.15"
+        strokeLinejoin="round"
+        opacity={wireOpacity.strong}
         initial={reduced ? false : { pathLength: 0 }}
         animate={{ pathLength: 1 }}
-        transition={{ duration: 2, ease: [0.16, 1, 0.3, 1], delay: 0.7 }}
+        transition={{ duration: 1.9, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
       />
+      <motion.path
+        d="M1060 400 H1240 V455 H1060 Z M1060 400 V370 H1090 V400 M1240 400 V370 H1210 V400"
+        stroke={color.wire}
+        strokeWidth="1"
+        opacity={wireOpacity.mid}
+        initial={reduced ? false : { pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.85 }}
+      />
+
+      {/* Soft labels */}
       <motion.g
-        initial={reduced ? false : { opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        initial={reduced ? false : { opacity: 0, y: 6 }}
+        animate={{ opacity: 0.4, y: 0 }}
+        transition={{ delay: 1.15, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       >
+        <text
+          x="90"
+          y="148"
+          fill={color.ink}
+          fontSize="11"
+          fontFamily="ui-monospace, monospace"
+          letterSpacing="0.08em"
+        >
+          LIVING · PLAN
+        </text>
+        <text
+          x="980"
+          y="168"
+          fill={color.ink}
+          fontSize="11"
+          fontFamily="ui-monospace, monospace"
+          letterSpacing="0.08em"
+        >
+          ELEVATION
+        </text>
         <line
-          x1="80"
-          y1="340"
-          x2="420"
-          y2="340"
-          stroke={color.maroon}
-          strokeWidth="1"
+          x1="90"
+          y1="440"
+          x2="380"
+          y2="440"
+          stroke={color.ink}
+          strokeWidth="0.8"
+          opacity={0.35}
         />
         <text
           x="200"
-          y="330"
-          fill={color.coolGrey}
-          fontSize="12"
-          fontFamily="monospace"
+          y="458"
+          fill={color.ink}
+          fontSize="11"
+          fontFamily="ui-monospace, monospace"
+          opacity={0.45}
         >
-          3400 mm
+          4200 mm
         </text>
       </motion.g>
     </svg>
@@ -110,18 +154,18 @@ function CountUp({
 
   return (
     <div>
-      <p className="font-display text-3xl font-semibold text-snow tabular-nums md:text-4xl">
+      <p className="font-display text-3xl font-semibold text-ink tabular-nums md:text-4xl">
         {n}
         {label.includes('+') ? '+' : ''}
       </p>
-      <p className="mt-1 text-xs uppercase tracking-[0.08em] text-cool-grey">
+      <p className="mt-1 text-xs uppercase tracking-[0.08em] text-steel">
         {label.replace('+', '')}
       </p>
     </div>
   )
 }
 
-/** Black & White Living Blueprint hero */
+/** Light studio hero — interior design line animation */
 export function HeroBlueprint() {
   const reduced = usePrefersReducedMotion()
   const ref = useRef<HTMLElement>(null)
@@ -130,8 +174,8 @@ export function HeroBlueprint() {
     target: ref,
     offset: ['start start', 'end start'],
   })
-  const parallaxY = useTransform(scrollYProgress, [0, 1], [0, 120])
-  const fade = useTransform(scrollYProgress, [0, 0.8], [1, 0.15])
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [0, 100])
+  const fade = useTransform(scrollYProgress, [0, 0.8], [1, 0.25])
   const gridX = useMotionValue(0)
   const gridY = useMotionValue(0)
   const springX = useSpring(gridX, { stiffness: 60, damping: 20 })
@@ -146,8 +190,8 @@ export function HeroBlueprint() {
   useEffect(() => {
     if (reduced) return
     const onMove = (e: MouseEvent) => {
-      const px = (e.clientX / window.innerWidth - 0.5) * 24
-      const py = (e.clientY / window.innerHeight - 0.5) * 16
+      const px = (e.clientX / window.innerWidth - 0.5) * 20
+      const py = (e.clientY / window.innerHeight - 0.5) * 14
       gridX.set(px)
       gridY.set(py)
     }
@@ -162,7 +206,7 @@ export function HeroBlueprint() {
       ref={ref}
       aria-labelledby="home-hero-heading"
       data-cursor="crosshair"
-      className="relative isolate min-h-[min(100vh,960px)] overflow-hidden bg-ink text-snow"
+      className="relative isolate min-h-[min(100vh,960px)] overflow-hidden bg-page text-ink"
     >
       <div className="hero-mesh absolute inset-0" aria-hidden />
 
@@ -180,17 +224,17 @@ export function HeroBlueprint() {
         <img
           src={homeHero.image.src}
           alt=""
-          className="h-full w-full object-cover opacity-20 mix-blend-luminosity"
+          className="h-full w-full object-cover opacity-[0.1] mix-blend-multiply"
           fetchPriority="high"
           decoding="async"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/92 to-wine/50" />
+        <div className="absolute inset-0 bg-gradient-to-r from-page via-page/92 to-page/50" />
       </motion.div>
 
-      <BlueprintSvgOverlay reduced={reduced} />
+      <InteriorSvgOverlay reduced={reduced} />
 
       {!reduced && webglReady ? (
-        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[55%] lg:block">
+        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[58%] lg:block">
           <Suspense fallback={null}>
             <BlueprintScene />
           </Suspense>
@@ -200,24 +244,24 @@ export function HeroBlueprint() {
       <div className="container-ae relative z-10 flex min-h-[min(100vh,960px)] flex-col justify-center py-24 md:py-28">
         <div className="max-w-3xl">
           <motion.p
-            className="text-xs font-medium uppercase tracking-[0.12em] text-maroon"
+            className="text-xs font-medium uppercase tracking-[0.12em] text-steel"
             initial={reduced ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           >
-            {eyebrow} · Living Blueprint
+            {eyebrow} · Interior studio
           </motion.p>
 
           <div className="mt-5" id="home-hero-heading">
             <SplitHeading
               text={title}
-              className="font-display text-hero font-semibold tracking-tight text-snow"
+              className="font-display text-hero font-semibold tracking-tight text-ink"
               delay={0.15}
             />
           </div>
 
           <motion.p
-            className="mt-6 max-w-xl text-body-lg text-cool-grey"
+            className="mt-6 max-w-xl text-body-lg text-steel"
             initial={reduced ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.55, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -238,7 +282,9 @@ export function HeroBlueprint() {
               <ButtonLink
                 to={secondaryCta.href}
                 variant="secondary"
-                className={cn('border-cool-grey text-snow hover:bg-steel hover:text-on-maroon')}
+                className={cn(
+                  'border-steel text-ink hover:bg-steel hover:text-on-maroon',
+                )}
               >
                 {secondaryCta.label}
               </ButtonLink>
@@ -246,7 +292,7 @@ export function HeroBlueprint() {
           </motion.div>
 
           <motion.div
-            className="mt-14 grid max-w-lg grid-cols-3 gap-6 border-t border-cool-grey/30 pt-8"
+            className="mt-14 grid max-w-lg grid-cols-3 gap-6 border-t border-border pt-8"
             initial={reduced ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 0.5 }}

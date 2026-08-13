@@ -95,7 +95,7 @@ export function ContactPage() {
               href={`https://wa.me/${site.whatsapp}?text=${encodeURIComponent('Hi Artistic Engineers, I would like to enquire.')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-11 items-center justify-center rounded-md bg-navy-950 px-5 text-body font-medium text-white hover:bg-navy-800 focus-visible:outline-focus"
+              className="inline-flex h-11 items-center justify-center rounded-md bg-action px-5 text-body font-medium text-on-action hover:bg-action-hover focus-visible:outline-focus"
             >
               Chat on WhatsApp
             </a>

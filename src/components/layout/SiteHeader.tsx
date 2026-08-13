@@ -24,7 +24,7 @@ export function SiteHeader() {
       <Container className="flex h-16 items-center justify-between gap-4 lg:h-[72px]">
         <NavLink
           to="/"
-          className="font-display text-lg font-semibold tracking-tight text-navy-950 focus-visible:outline-focus"
+          className="font-display text-lg font-semibold tracking-tight text-ink focus-visible:outline-focus"
         >
           {site.name}
         </NavLink>
@@ -36,8 +36,8 @@ export function SiteHeader() {
               to={item.to}
               className={({ isActive }) =>
                 cn(
-                  'rounded-md px-2.5 py-2 text-sm font-medium text-secondary transition-colors hover:text-navy-950',
-                  isActive && 'text-navy-950',
+                  'rounded-md px-2.5 py-2 text-sm font-medium text-secondary transition-colors hover:text-ink',
+                  isActive && 'text-ink',
                 )
               }
             >
@@ -49,7 +49,7 @@ export function SiteHeader() {
         <div className="hidden items-center gap-2 md:flex">
           <a
             href={`tel:${site.phoneTel}`}
-            className="inline-flex h-11 items-center gap-2 rounded-md px-3 text-sm font-medium text-navy-950 hover:bg-grey-50 focus-visible:outline-focus"
+            className="inline-flex h-11 items-center gap-2 rounded-md px-3 text-sm font-medium text-ink hover:bg-white focus-visible:outline-focus"
           >
             <Phone className="size-4" aria-hidden />
             Call
@@ -61,7 +61,7 @@ export function SiteHeader() {
 
         <button
           type="button"
-          className="inline-flex size-11 items-center justify-center rounded-md border border-border text-navy-950 xl:hidden focus-visible:outline-focus"
+          className="inline-flex size-11 items-center justify-center rounded-md border border-border text-ink xl:hidden focus-visible:outline-focus"
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen((v) => !v)}
@@ -82,7 +82,7 @@ export function SiteHeader() {
                 key={item.to}
                 to={item.to}
                 onClick={() => setOpen(false)}
-                className="rounded-md px-3 py-3 text-base font-medium text-navy-950 hover:bg-grey-50"
+                className="rounded-md px-3 py-3 text-base font-medium text-ink hover:bg-white"
               >
                 {item.label}
               </NavLink>

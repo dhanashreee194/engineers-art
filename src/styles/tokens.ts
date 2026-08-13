@@ -1,18 +1,26 @@
 /**
- * Black & White — single source for non-CSS contexts (WebGL, canvas).
+ * Architect's studio (light) — non-CSS contexts (WebGL, canvas).
  * Keep in sync with `src/index.css` @theme primitives.
- * Token keys match Maroon & Steel for component compatibility.
  */
 export const color = {
-  ink: '#111111',
-  wine: '#000000',
-  maroon: '#111111',
-  steel: '#5C5C5C',
-  coolGrey: '#D4D4D4',
-  snow: '#F5F5F5',
+  ink: '#141414',
+  wine: '#2A2926',
+  maroon: '#141414',
+  steel: '#5A5A55',
+  coolGrey: '#E2DFD8',
+  snow: '#F7F6F3',
   white: '#FFFFFF',
-  /** White label on black fills — never ink or steel */
-  onMaroon: '#FFFFFF',
+  /** Paper label on accent fills */
+  onMaroon: '#F7F6F3',
+  /** Technical drawing stroke on paper */
+  wire: '#1E1E1E',
+} as const
+
+/** Faint blueprint line opacity on light paper (18–28%) */
+export const wireOpacity = {
+  faint: 0.18,
+  mid: 0.22,
+  strong: 0.28,
 } as const
 
 export type BrandColor = keyof typeof color

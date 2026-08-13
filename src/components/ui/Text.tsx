@@ -6,7 +6,7 @@ const variants = {
   lead: 'text-body-lg text-secondary',
   muted: 'text-body text-secondary',
   subhead: 'text-subhead font-medium text-secondary',
-  inverse: 'text-body text-cool-grey',
+  inverse: 'text-body text-secondary',
 } as const
 
 export type TextProps = HTMLAttributes<HTMLElement> & {

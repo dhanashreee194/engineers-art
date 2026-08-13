@@ -23,11 +23,13 @@ const support = [
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-navy-800 bg-navy-950 text-white">
+    <footer className="border-t border-border bg-ink text-on-maroon">
       <Container className="grid gap-10 py-12 md:grid-cols-2 lg:grid-cols-4 lg:py-16">
         <div className="space-y-4">
-          <p className="font-display text-xl font-semibold">{site.name}</p>
-          <p className="text-sm leading-relaxed text-white/75">
+          <p className="font-display text-xl font-semibold text-on-maroon">
+            {site.name}
+          </p>
+          <p className="text-sm leading-relaxed text-on-maroon/75">
             Precision metal engineering and smart space systems from {site.city}.{' '}
             {site.tagline}.
           </p>
@@ -36,18 +38,18 @@ export function SiteFooter() {
         <FooterCol title="Company" links={company} />
         <FooterCol title="Solutions" links={solutions} />
         <div className="space-y-4">
-          <p className="text-sm font-semibold uppercase tracking-[0.06em] text-white/60">
+          <p className="text-sm font-semibold uppercase tracking-[0.06em] text-on-maroon/60">
             Contact
           </p>
-          <ul className="space-y-2 text-sm text-white/80">
+          <ul className="space-y-2 text-sm text-on-maroon/80">
             <li>{site.address}</li>
             <li>
-              <a className="hover:text-white" href={`tel:${site.phoneTel}`}>
+              <a className="hover:text-on-maroon" href={`tel:${site.phoneTel}`}>
                 {site.phoneDisplay}
               </a>
             </li>
             <li>
-              <a className="hover:text-white" href={`mailto:${site.email}`}>
+              <a className="hover:text-on-maroon" href={`mailto:${site.email}`}>
                 {site.email}
               </a>
             </li>
@@ -57,7 +59,7 @@ export function SiteFooter() {
               <li key={link.to}>
                 <Link
                   to={link.to}
-                  className="text-sm text-white/80 hover:text-white"
+                  className="text-sm text-on-maroon/80 hover:text-on-maroon"
                 >
                   {link.label}
                 </Link>
@@ -67,8 +69,8 @@ export function SiteFooter() {
         </div>
       </Container>
 
-      <div className="border-t border-white/10">
-        <Container className="flex flex-col gap-2 py-4 text-sm text-white/60 sm:flex-row sm:items-center sm:justify-between">
+      <div className="border-t border-on-maroon/15">
+        <Container className="flex flex-col gap-2 py-4 text-sm text-on-maroon/60 sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {new Date().getFullYear()} {site.name}
           </p>
@@ -90,13 +92,16 @@ function FooterCol({
 }) {
   return (
     <div className="space-y-4">
-      <p className="text-sm font-semibold uppercase tracking-[0.06em] text-white/60">
+      <p className="text-sm font-semibold uppercase tracking-[0.06em] text-on-maroon/60">
         {title}
       </p>
       <ul className="space-y-2">
         {links.map((link) => (
           <li key={link.to}>
-            <Link to={link.to} className="text-sm text-white/80 hover:text-white">
+            <Link
+              to={link.to}
+              className="text-sm text-on-maroon/80 hover:text-on-maroon"
+            >
               {link.label}
             </Link>
           </li>

@@ -47,10 +47,10 @@ export function ProjectsGrid({ featured = true }: { featured?: boolean }) {
               />
               <div className="mt-4 space-y-2">
                 <Badge tone="inverse">{project.sector}</Badge>
-                <h3 className="font-display text-xl font-semibold text-white">
+                <h3 className="font-display text-xl font-semibold text-ink">
                   {project.title}
                 </h3>
-                <p className="text-sm text-white/75">{project.outcome}</p>
+                <p className="text-sm text-steel">{project.outcome}</p>
               </div>
             </Link>
           </StaggerItem>
