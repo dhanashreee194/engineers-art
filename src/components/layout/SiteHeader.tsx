@@ -1,6 +1,6 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import { Menu, Phone, X } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ButtonLink } from '@/components/ui/ButtonLink'
 import { Container } from '@/components/ui/Container'
 import { cn } from '@/lib/cn'
@@ -18,13 +18,38 @@ const nav = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const { pathname } = useLocation()
+  const cinematicHome = pathname === '/'
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  const overHero = cinematicHome && !scrolled && !open
+  const ink = overHero ? 'text-on-maroon' : 'text-ink'
+  const muted = overHero ? 'text-on-maroon/75 hover:text-on-maroon' : 'text-secondary hover:text-ink'
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/80 bg-page/90 backdrop-blur-[12px]">
+    <header
+      className={cn(
+        'z-50 transition-colors duration-300',
+        cinematicHome ? 'fixed inset-x-0 top-0' : 'sticky top-0',
+        overHero
+          ? 'border-b border-transparent bg-transparent'
+          : 'border-b border-border/80 bg-page/90 backdrop-blur-[12px]',
+      )}
+    >
       <Container className="flex h-16 items-center justify-between gap-4 lg:h-[72px]">
         <NavLink
           to="/"
-          className="font-display text-lg font-semibold tracking-tight text-ink focus-visible:outline-focus"
+          className={cn(
+            'font-display text-lg font-semibold tracking-tight focus-visible:outline-focus',
+            ink,
+          )}
         >
           {site.name}
         </NavLink>
@@ -36,8 +61,9 @@ export function SiteHeader() {
               to={item.to}
               className={({ isActive }) =>
                 cn(
-                  'rounded-md px-2.5 py-2 text-sm font-medium text-secondary transition-colors hover:text-ink',
-                  isActive && 'text-ink',
+                  'rounded-md px-2.5 py-2 text-sm font-medium transition-colors',
+                  muted,
+                  isActive && ink,
                 )
               }
             >
@@ -49,19 +75,35 @@ export function SiteHeader() {
         <div className="hidden items-center gap-2 md:flex">
           <a
             href={`tel:${site.phoneTel}`}
-            className="inline-flex h-11 items-center gap-2 rounded-md px-3 text-sm font-medium text-ink hover:bg-white focus-visible:outline-focus"
+            className={cn(
+              'inline-flex h-11 items-center gap-2 rounded-md px-3 text-sm font-medium focus-visible:outline-focus',
+              overHero ? 'text-on-maroon hover:bg-on-maroon/10' : 'text-ink hover:bg-white',
+            )}
           >
             <Phone className="size-4" aria-hidden />
             Call
           </a>
-          <ButtonLink to="/contact?intent=quote" size="sm">
+          <ButtonLink
+            to="/contact?intent=quote"
+            size="sm"
+            className={
+              overHero
+                ? 'bg-on-maroon text-ink hover:bg-snow'
+                : undefined
+            }
+          >
             Request Quote
           </ButtonLink>
         </div>
 
         <button
           type="button"
-          className="inline-flex size-11 items-center justify-center rounded-md border border-border text-ink xl:hidden focus-visible:outline-focus"
+          className={cn(
+            'inline-flex size-11 items-center justify-center rounded-md border xl:hidden focus-visible:outline-focus',
+            overHero
+              ? 'border-on-maroon/40 text-on-maroon'
+              : 'border-border text-ink',
+          )}
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen((v) => !v)}

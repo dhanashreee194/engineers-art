@@ -1,5 +1,7 @@
 export { HeroIndustrial } from '@/components/sections/HeroIndustrial'
 export { HeroBlueprint } from '@/components/sections/HeroBlueprint'
+export { HeroCinematic } from '@/components/sections/HeroCinematic'
+export { HorizontalSpaces } from '@/components/sections/HorizontalSpaces'
 export { ProcessBlueprint } from '@/components/sections/ProcessBlueprint'
 export { TrustBar } from '@/components/sections/TrustBar'
 export { AboutTeaser } from '@/components/sections/AboutTeaser'
