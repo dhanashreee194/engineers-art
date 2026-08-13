@@ -9,7 +9,7 @@ export const homeHero = {
   secondaryCta: { label: 'Explore Capabilities', href: '/capabilities' },
   image: {
     src: media.hero,
-    alt: 'Modern living room interior with engineered furniture systems',
+    alt: 'Modern bedroom interior with soft finishes and engineered fittings',
   },
 } as const
 

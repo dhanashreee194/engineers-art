@@ -11,22 +11,22 @@ import { media } from '@/content/site'
 
 const panels = [
   {
+    title: 'Bedrooms',
+    body: 'Calm suites with fitted storage and refined metal detailing.',
+    image: media.bedroom,
+    href: '/products/interior',
+  },
+  {
     title: 'Living rooms',
-    body: 'Space-saving systems and refined metal detailing for everyday living.',
-    image: media.hero,
+    body: 'Space-saving systems engineered for everyday living.',
+    image: media.living,
     href: '/products/interior',
   },
   {
     title: 'Smart interiors',
-    body: 'Modular furniture engineered for compact modern homes.',
+    body: 'Modular furniture for compact modern homes.',
     image: media.interior,
     href: '/products/interior',
-  },
-  {
-    title: 'Crafted finishes',
-    body: 'Edges, fittings, and install-ready assemblies from the Nashik shop floor.',
-    image: media.workshop,
-    href: '/capabilities',
   },
   {
     title: 'Custom spaces',
