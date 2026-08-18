@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type MouseEvent, type PointerEvent, type ReactNode } from 'react'
 import {
   AnimatePresence,
   animate,
@@ -319,6 +319,94 @@ function SketchPanel({
   )
 }
 
+function relativeOffset(index: number, active: number, len: number) {
+  let d = index - active
+  if (d > len / 2) d -= len
+  if (d < -len / 2) d += len
+  return d
+}
+
+function orbitMotion(offset: number, reduced: boolean) {
+  if (reduced) {
+    return {
+      x: '-50%',
+      scale: offset === 0 ? 1 : 0.9,
+      rotateY: 0,
+      opacity: offset === 0 ? 1 : 0,
+      zIndex: offset === 0 ? 30 : 0,
+      filter: 'brightness(1)',
+      width: offset === 0 ? '92%' : '0%',
+    }
+  }
+
+  const table: Record<
+    number,
+    { x: string; scale: number; rotateY: number; opacity: number; zIndex: number; filter: string; width: string }
+  > = {
+    0: {
+      x: '-50%',
+      scale: 1,
+      rotateY: 0,
+      opacity: 1,
+      zIndex: 40,
+      filter: 'brightness(1)',
+      width: 'min(92vw, 70%)',
+    },
+    [-1]: {
+      x: 'calc(-50% - 41%)',
+      scale: 0.7,
+      rotateY: 28,
+      opacity: 0.7,
+      zIndex: 20,
+      filter: 'brightness(0.7)',
+      width: 'min(28vw, 14%)',
+    },
+    1: {
+      x: 'calc(-50% + 41%)',
+      scale: 0.7,
+      rotateY: -28,
+      opacity: 0.7,
+      zIndex: 20,
+      filter: 'brightness(0.7)',
+      width: 'min(28vw, 14%)',
+    },
+    [-2]: {
+      x: 'calc(-50% - 62%)',
+      scale: 0.48,
+      rotateY: 42,
+      opacity: 0.25,
+      zIndex: 10,
+      filter: 'brightness(0.5)',
+      width: 'min(22vw, 10%)',
+    },
+    2: {
+      x: 'calc(-50% + 62%)',
+      scale: 0.48,
+      rotateY: -42,
+      opacity: 0.25,
+      zIndex: 10,
+      filter: 'brightness(0.5)',
+      width: 'min(22vw, 10%)',
+    },
+  }
+
+  return (
+    table[offset] ?? {
+      x: '-50%',
+      scale: 0.35,
+      rotateY: 0,
+      opacity: 0,
+      zIndex: 0,
+      filter: 'brightness(0.4)',
+      width: '8%',
+    }
+  )
+}
+
+/**
+ * Immersive circular gallery: wide center viewport + orbital side peeks.
+ * Drag / swipe rotates scenes; no large arrow chrome.
+ */
 function ImmersiveWorld({
   reduced,
   active,
@@ -331,20 +419,49 @@ function ImmersiveWorld({
   brand: ReactNode
 }) {
   const slide = SLIDES[active]
-  const prev = (active - 1 + SLIDES.length) % SLIDES.length
-  const next = (active + 1) % SLIDES.length
+  const len = SLIDES.length
   const stageRef = useRef<HTMLDivElement>(null)
+  const dragStartX = useRef<number | null>(null)
+  const [dragging, setDragging] = useState(false)
+  const dragX = useMotionValue(0)
+  const dragSpring = useSpring(dragX, { stiffness: 220, damping: 28, mass: 0.4 })
+
   const mx = useMotionValue(0)
   const my = useMotionValue(0)
-  const smx = useSpring(mx, { stiffness: 80, damping: 20, mass: 0.35 })
-  const smy = useSpring(my, { stiffness: 80, damping: 20, mass: 0.35 })
-  const px = useTransform(smx, [-0.5, 0.5], [18, -18])
-  const py = useTransform(smy, [-0.5, 0.5], [12, -12])
-  const bgX = useTransform(smx, [-0.5, 0.5], [28, -28])
-  const bgY = useTransform(smy, [-0.5, 0.5], [18, -18])
+  const smx = useSpring(mx, { stiffness: 70, damping: 22, mass: 0.4 })
+  const smy = useSpring(my, { stiffness: 70, damping: 22, mass: 0.4 })
+  const parallaxX = useTransform(smx, [-0.5, 0.5], [10, -10])
+  const parallaxY = useTransform(smy, [-0.5, 0.5], [6, -6])
 
-  function onMove(e: MouseEvent<HTMLDivElement>) {
-    if (reduced || !stageRef.current) return
+  function go(delta: number) {
+    onChange((active + delta + len) % len)
+  }
+
+  function onPointerDown(e: PointerEvent<HTMLDivElement>) {
+    dragStartX.current = e.clientX
+    setDragging(true)
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }
+
+  function onPointerMove(e: PointerEvent<HTMLDivElement>) {
+    if (dragStartX.current == null) return
+    const dx = e.clientX - dragStartX.current
+    dragX.set(dx * 0.55)
+  }
+
+  function onPointerUp(e: PointerEvent<HTMLDivElement>) {
+    if (dragStartX.current == null) return
+    const dx = e.clientX - dragStartX.current
+    dragStartX.current = null
+    setDragging(false)
+    dragX.set(0)
+    if (Math.abs(dx) > 56) {
+      go(dx < 0 ? 1 : -1)
+    }
+  }
+
+  function onStageMove(e: MouseEvent<HTMLDivElement>) {
+    if (reduced || dragging || !stageRef.current) return
     const r = stageRef.current.getBoundingClientRect()
     mx.set((e.clientX - r.left) / r.width - 0.5)
     my.set((e.clientY - r.top) / r.height - 0.5)
@@ -353,237 +470,224 @@ function ImmersiveWorld({
   return (
     <div
       ref={stageRef}
-      className="absolute inset-0 overflow-hidden bg-ink"
-      onMouseMove={onMove}
+      className="absolute inset-0 overflow-hidden bg-ink select-none"
+      onMouseMove={onStageMove}
       onMouseLeave={() => {
         mx.set(0)
         my.set(0)
       }}
     >
-      {/* Deep world / blurred hinterland */}
-      <motion.div
-        className="absolute inset-[-12%] scale-110"
-        style={reduced ? undefined : { x: bgX, y: bgY }}
-        aria-hidden
-      >
+      {/* Atmospheric hinterland */}
+      <div className="absolute inset-0" aria-hidden>
         <AnimatePresence mode="sync" initial={false}>
           <motion.img
-            key={`bg-${slide.id}`}
+            key={`wash-${slide.id}`}
             src={slide.image}
             alt=""
-            className="h-full w-full object-cover blur-2xl brightness-[0.45] saturate-125"
+            className="h-full w-full object-cover blur-3xl brightness-[0.35] saturate-150"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.9 }}
           />
         </AnimatePresence>
-      </motion.div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_10%,rgba(10,10,10,0.72)_100%)]" />
+      </div>
 
-      {/* Atmosphere wash */}
-      <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,rgba(20,20,20,0.55)_100%)]"
-        aria-hidden
-      />
-
-      {/* Revolving portal rim */}
+      {/* Orbital rings — circular gallery cue */}
       <div
         className="pointer-events-none absolute inset-0 flex items-center justify-center"
         aria-hidden
       >
         <motion.div
-          className="absolute size-[min(92vmin,820px)] rounded-full border border-white/20"
+          className="absolute h-[min(78%,640px)] w-[min(118%,1100px)] rounded-[50%] border border-white/15"
           animate={reduced ? undefined : { rotate: 360 }}
           transition={
             reduced
               ? undefined
-              : { duration: 32, ease: 'linear', repeat: Infinity }
+              : { duration: 56, ease: 'linear', repeat: Infinity }
           }
-        >
-          <span className="absolute left-1/2 top-0 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white" />
-          <span className="absolute bottom-[12%] left-[8%] size-1.5 rounded-full bg-white/70" />
-          <span className="absolute right-[10%] top-[30%] size-1.5 rounded-full bg-white/60" />
-        </motion.div>
+        />
         <motion.div
-          className="absolute size-[min(78vmin,680px)] rounded-full border border-dashed border-white/25"
+          className="absolute h-[min(58%,480px)] w-[min(92%,860px)] rounded-[50%] border border-dashed border-white/20"
           animate={reduced ? undefined : { rotate: -360 }}
           transition={
             reduced
               ? undefined
-              : { duration: 48, ease: 'linear', repeat: Infinity }
+              : { duration: 72, ease: 'linear', repeat: Infinity }
           }
         />
+        <div className="absolute h-[min(42%,340px)] w-[min(70%,640px)] rounded-[50%] border border-white/10" />
       </div>
 
-      {/* Real view portal — full immersive room */}
+      {/* 3D circular track */}
       <motion.div
-        className="absolute inset-[3%] overflow-hidden rounded-[clamp(1.25rem,3vw,2.5rem)] border border-white/25 shadow-[0_0_80px_rgba(0,0,0,0.45)] md:inset-[4%_5%]"
-        style={reduced ? undefined : { x: px, y: py }}
+        className={cn(
+          'absolute inset-x-0 top-[4%] bottom-[7.5rem] md:top-[5%] md:bottom-[8.5rem]',
+          dragging ? 'cursor-grabbing' : 'cursor-grab',
+        )}
+        style={{
+          perspective: 1600,
+          x: reduced ? 0 : parallaxX,
+          y: reduced ? 0 : parallaxY,
+        }}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
       >
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={slide.id}
-            className="absolute inset-0"
-            initial={
-              reduced
-                ? false
-                : {
-                    clipPath: 'circle(0% at 50% 50%)',
-                    scale: 1.25,
-                    filter: 'blur(12px)',
-                  }
-            }
-            animate={{
-              clipPath: 'circle(150% at 50% 50%)',
-              scale: 1,
-              filter: 'blur(0px)',
-            }}
-            exit={
-              reduced
-                ? undefined
-                : {
-                    clipPath: 'circle(0% at 80% 50%)',
-                    scale: 1.08,
-                    filter: 'blur(8px)',
-                    opacity: 0.5,
-                  }
-            }
-            transition={{ duration: 1.15, ease: easeOutExpo }}
-          >
-            <motion.img
-              src={slide.image}
-              alt={slide.alt}
-              className="h-full w-full object-cover"
-              initial={reduced ? false : { scale: 1.16 }}
-              animate={{ scale: 1.04 }}
-              transition={{ duration: 6, ease: 'linear' }}
-              fetchPriority="high"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-ink/10 to-ink/25" />
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,transparent_35%,rgba(0,0,0,0.35)_100%)]" />
-          </motion.div>
-        </AnimatePresence>
-
-        {/* HUD: room identity */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`hud-${slide.id}`}
-            className="absolute left-5 top-5 z-20 md:left-8 md:top-8"
-            initial={reduced ? false : { opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 8 }}
-            transition={{ duration: 0.45, ease: easeOutExpo }}
-          >
-            <p className="text-[0.65rem] font-medium uppercase tracking-[0.22em] text-on-maroon/80">
-              Entered space · Live view
-            </p>
-            <p className="mt-1 font-mono text-xs tracking-[0.16em] text-on-maroon/70">
-              {slide.code}
-            </p>
-            <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-on-maroon md:text-5xl">
-              {slide.label}
-            </h2>
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Progress ring */}
-        <svg
-          className="pointer-events-none absolute right-5 top-5 size-14 text-on-maroon/70 md:right-8 md:top-8 md:size-16"
-          viewBox="0 0 100 100"
-          fill="none"
-          aria-hidden
+        <motion.div
+          className="relative mx-auto h-full w-full max-w-[1400px]"
+          style={{
+            transformStyle: 'preserve-3d',
+            x: dragSpring,
+          }}
         >
-          <circle
-            cx="50"
-            cy="50"
-            r="42"
-            stroke="currentColor"
-            strokeWidth="2"
-            opacity="0.25"
-          />
-          <motion.circle
-            key={`arc-${active}`}
-            cx="50"
-            cy="50"
-            r="42"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            pathLength={1}
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{
-              duration: reduced ? 0 : SLIDE_MS / 1000,
-              ease: 'linear',
-            }}
-            style={{ rotate: -90, transformOrigin: '50% 50%' }}
-          />
-        </svg>
+          {SLIDES.map((item, index) => {
+            const offset = relativeOffset(index, active, len)
+            const style = orbitMotion(offset, reduced)
+            const isCenter = offset === 0
+            const visible = Math.abs(offset) <= 2
 
-        {/* Brand + CTAs over the world */}
-        <div className="absolute inset-x-0 bottom-0 z-20 px-5 pb-6 pt-20 md:px-10 md:pb-8">
-          {brand}
-        </div>
-      </motion.div>
+            return (
+              <motion.article
+                key={item.id}
+                className={cn(
+                  'absolute left-1/2 top-1/2 h-[86%] overflow-hidden rounded-[clamp(1rem,2vw,1.75rem)] border border-white/20 bg-ink shadow-[0_24px_80px_rgba(0,0,0,0.45)] will-change-transform',
+                  !visible && 'pointer-events-none',
+                )}
+                style={{
+                  transformOrigin: 'center center',
+                  zIndex: style.zIndex,
+                }}
+                initial={false}
+                animate={{
+                  x: style.x,
+                  y: '-50%',
+                  scale: style.scale,
+                  rotateY: style.rotateY,
+                  opacity: style.opacity,
+                  filter: style.filter,
+                  width: style.width,
+                }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 110,
+                  damping: 22,
+                  mass: 0.75,
+                }}
+                onClick={() => {
+                  if (!isCenter && Math.abs(offset) === 1) onChange(index)
+                }}
+              >
+                <img
+                  src={item.image}
+                  alt={isCenter ? item.alt : ''}
+                  className="h-full w-full object-cover"
+                  draggable={false}
+                  fetchPriority={isCenter ? 'high' : 'auto'}
+                  loading={isCenter ? 'eager' : 'lazy'}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-ink/20" />
 
-      {/* World selectors — circular portals */}
-      <div className="absolute bottom-[7.5rem] left-1/2 z-30 flex -translate-x-1/2 items-end gap-3 md:bottom-[8.5rem] md:gap-4">
+                {isCenter ? (
+                  <div className="absolute inset-x-0 top-0 z-10 flex items-start justify-between p-5 md:p-7">
+                    <div>
+                      <p className="font-mono text-[0.65rem] tracking-[0.16em] text-on-maroon/75">
+                        {item.code}
+                      </p>
+                      <h2 className="mt-1 font-display text-2xl font-semibold tracking-tight text-on-maroon md:text-4xl">
+                        {item.label}
+                      </h2>
+                    </div>
+                    <svg
+                      className="size-11 text-on-maroon/65 md:size-12"
+                      viewBox="0 0 100 100"
+                      fill="none"
+                      aria-hidden
+                    >
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="40"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        opacity="0.25"
+                      />
+                      <motion.circle
+                        key={`arc-${active}`}
+                        cx="50"
+                        cy="50"
+                        r="40"
+                        stroke="currentColor"
+                        strokeWidth="2.4"
+                        strokeLinecap="round"
+                        pathLength={1}
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{
+                          duration: reduced ? 0 : SLIDE_MS / 1000,
+                          ease: 'linear',
+                        }}
+                        style={{ rotate: -90, transformOrigin: '50% 50%' }}
+                      />
+                    </svg>
+                  </div>
+                ) : null}
+
+                {isCenter ? (
+                  <div className="absolute inset-x-0 bottom-0 z-10 px-5 pb-5 pt-16 md:px-8 md:pb-7">
+                    {brand}
+                  </div>
+                ) : null}
+              </motion.article>
+            )
+          })}
+        </motion.div>
+
+        {/* Tiny edge chevrons — accessibility only */}
         <button
           type="button"
           aria-label="Previous space"
-          onClick={() => onChange(prev)}
-          className="mb-3 inline-flex size-9 items-center justify-center rounded-full border border-white/30 bg-ink/40 text-on-maroon backdrop-blur-sm transition hover:bg-ink/70 focus-visible:outline-focus"
+          onClick={() => go(-1)}
+          className="absolute left-2 top-1/2 z-50 -translate-y-1/2 text-on-maroon/50 transition hover:text-on-maroon focus-visible:outline-focus md:left-3"
         >
-          <ChevronLeft className="size-4" />
+          <ChevronLeft className="size-5" strokeWidth={1.5} />
         </button>
-
-        {SLIDES.map((s, i) => {
-          const selected = i === active
-          return (
-            <button
-              key={s.id}
-              type="button"
-              aria-label={`Enter ${s.label}`}
-              aria-current={selected}
-              onClick={() => onChange(i)}
-              className={cn(
-                'relative overflow-hidden rounded-full border transition focus-visible:outline-focus',
-                selected
-                  ? 'size-14 border-white shadow-[0_0_0_3px_rgba(255,255,255,0.25)] md:size-16'
-                  : 'size-10 border-white/35 opacity-75 hover:opacity-100 md:size-12',
-              )}
-            >
-              <img
-                src={s.image}
-                alt=""
-                className="h-full w-full object-cover"
-                loading="lazy"
-              />
-              {selected ? (
-                <motion.span
-                  className="absolute inset-0 rounded-full border-2 border-white/80"
-                  layoutId="world-ring"
-                />
-              ) : null}
-            </button>
-          )
-        })}
-
         <button
           type="button"
           aria-label="Next space"
-          onClick={() => onChange(next)}
-          className="mb-3 inline-flex size-9 items-center justify-center rounded-full border border-white/30 bg-ink/40 text-on-maroon backdrop-blur-sm transition hover:bg-ink/70 focus-visible:outline-focus"
+          onClick={() => go(1)}
+          className="absolute right-2 top-1/2 z-50 -translate-y-1/2 text-on-maroon/50 transition hover:text-on-maroon focus-visible:outline-focus md:right-3"
         >
-          <ChevronRight className="size-4" />
+          <ChevronRight className="size-5" strokeWidth={1.5} />
         </button>
+      </motion.div>
+
+      {/* Minimal pagination */}
+      <div className="absolute inset-x-0 bottom-5 z-40 flex justify-center gap-2 md:bottom-6">
+        {SLIDES.map((s, i) => (
+          <button
+            key={s.id}
+            type="button"
+            aria-label={`Go to ${s.label}`}
+            aria-current={i === active}
+            onClick={() => onChange(i)}
+            className={cn(
+              'rounded-full transition focus-visible:outline-focus',
+              i === active
+                ? 'h-2 w-5 bg-on-maroon'
+                : 'size-2 bg-on-maroon/35 hover:bg-on-maroon/60',
+            )}
+          />
+        ))}
       </div>
     </div>
   )
 }
 
 /**
- * Opening: three pencils draw → photos resolve → immersive world slider.
+ * Opening: three pencils draw → photos resolve → immersive circular gallery.
  */
 export function SketchToRoom() {
   const reduced = usePrefersReducedMotion()
@@ -592,6 +696,7 @@ export function SketchToRoom() {
   const [active, setActive] = useState(0)
   const progress = useMotionValue(reduced ? 1 : 0)
   const enteredSlider = useRef(false)
+  const pauseAuto = useRef(false)
 
   const brandOpacity = useTransform(progress, [0.82, 0.96], [0, 1])
   const brandY = useTransform(progress, [0.82, 0.96], [20, 0])
@@ -638,12 +743,21 @@ export function SketchToRoom() {
   useEffect(() => {
     if (!sliderMode || reduced) return
     const id = window.setInterval(() => {
+      if (pauseAuto.current) return
       setActive((i) => (i + 1) % SLIDES.length)
     }, SLIDE_MS)
     return () => window.clearInterval(id)
   }, [sliderMode, reduced, active])
 
   const { primaryCta, secondaryCta } = homeHero
+
+  function handleChange(index: number) {
+    pauseAuto.current = true
+    setActive(index)
+    window.setTimeout(() => {
+      pauseAuto.current = false
+    }, SLIDE_MS)
+  }
 
   const brandBlock = showBrand ? (
     <motion.div
@@ -657,7 +771,7 @@ export function SketchToRoom() {
           as="h1"
           text={site.name}
           className={cn(
-            'justify-center font-display text-[clamp(1.6rem,3.8vw,2.75rem)] font-semibold tracking-tight',
+            'justify-center font-display text-[clamp(1.5rem,3.5vw,2.5rem)] font-semibold tracking-tight',
             sliderMode ? 'text-on-maroon' : 'text-ink',
           )}
           delay={0.05}
@@ -771,7 +885,7 @@ export function SketchToRoom() {
               <ImmersiveWorld
                 reduced={reduced}
                 active={active}
-                onChange={setActive}
+                onChange={handleChange}
                 brand={brandBlock}
               />
             </motion.div>
