@@ -34,4 +34,5 @@ export const media = {
   exterior: assetUrl('images/space-office.jpg'),
   interior: assetUrl('images/space-living.jpg'),
   bedroom: assetUrl('images/space-bedroom.jpg'),
+  bath: assetUrl('images/space-bath.jpg'),
 } as const
