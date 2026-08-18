@@ -1,3 +1,12 @@
+/**
+ * Prefix public asset paths for GitHub Pages (`/engineers-art/`) and local (`/`).
+ */
+export function assetUrl(path: string): string {
+  const base = import.meta.env.BASE_URL || '/'
+  const normalized = path.replace(/^\//, '')
+  return `${base}${normalized}`
+}
+
 export const site = {
   name: 'Artistic Engineers',
   tagline: 'Expanding The Space To Perform',
@@ -16,13 +25,13 @@ export const site = {
  * Served from /public/images.
  */
 export const media = {
-  hero: '/images/hero-bedroom.jpg',
-  living: '/images/hero-living.jpg',
-  about: '/images/space-lounge.jpg',
-  plant: '/images/space-kitchen.jpg',
-  quality: '/images/space-office.jpg',
-  workshop: '/images/space-suite.jpg',
-  exterior: '/images/space-office.jpg',
-  interior: '/images/space-living.jpg',
-  bedroom: '/images/space-bedroom.jpg',
+  hero: assetUrl('images/hero-bedroom.jpg'),
+  living: assetUrl('images/hero-living.jpg'),
+  about: assetUrl('images/space-lounge.jpg'),
+  plant: assetUrl('images/space-kitchen.jpg'),
+  quality: assetUrl('images/space-office.jpg'),
+  workshop: assetUrl('images/space-suite.jpg'),
+  exterior: assetUrl('images/space-office.jpg'),
+  interior: assetUrl('images/space-living.jpg'),
+  bedroom: assetUrl('images/space-bedroom.jpg'),
 } as const

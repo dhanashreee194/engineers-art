@@ -1,4 +1,4 @@
-import { site } from '@/content/site'
+import { assetUrl, site } from '@/content/site'
 
 export const aboutPage = {
   hero: {
@@ -47,22 +47,22 @@ export const productsPage = {
       title: 'Interior systems',
       href: '/products/interior',
       body: 'Smart, space-saving furniture engineered in metal and hybrid constructions.',
-      image: '/images/space-living.jpg',
+      image: assetUrl('images/space-living.jpg'),
     },
     {
       title: 'Exterior & fabrication',
       href: '/products/exterior',
       body: 'Safety doors, laser cutting, shades, and fabricated exterior systems.',
-      image: '/images/space-office.jpg',
+      image: assetUrl('images/space-office.jpg'),
     },
     {
       title: 'Custom engineering',
       href: '/products/custom',
       body: 'When the catalog is not enough — we engineer to your brief.',
-      image: '/images/hero-living.jpg',
+      image: assetUrl('images/hero-living.jpg'),
     },
   ],
-} as const
+}
 
 export const interiorProducts = [
   { slug: 'metal-shoerack', name: 'Metal Shoerack', image: 'https://www.artisticengineers.in/public/img/products/metal-shoerack.jpg' },

@@ -9,7 +9,7 @@ export type PageSeo = {
   noindex?: boolean
 }
 
-export const defaultOgImage = '/images/hero-bedroom.jpg'
+export const defaultOgImage = `${SITE_URL}/images/hero-bedroom.jpg`
 
 export const pageSeo: Record<string, PageSeo> = {
   '/': {
