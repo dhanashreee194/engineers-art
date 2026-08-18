@@ -1,6 +1,6 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import { Menu, Phone, X } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ButtonLink } from '@/components/ui/ButtonLink'
 import { Container } from '@/components/ui/Container'
 import { cn } from '@/lib/cn'
@@ -18,13 +18,38 @@ const nav = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const { pathname } = useLocation()
+  const cinematicHome = pathname === '/'
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  const overHero = cinematicHome && !scrolled && !open
+  const ink = 'text-ink'
+  const muted = 'text-secondary hover:text-ink'
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/80 bg-page/90 backdrop-blur-[12px]">
+    <header
+      className={cn(
+        'z-50 transition-colors duration-300',
+        cinematicHome ? 'fixed inset-x-0 top-0' : 'sticky top-0',
+        overHero
+          ? 'border-b border-border/40 bg-page/70 backdrop-blur-[12px]'
+          : 'border-b border-border/80 bg-page/90 backdrop-blur-[12px]',
+      )}
+    >
       <Container className="flex h-16 items-center justify-between gap-4 lg:h-[72px]">
         <NavLink
           to="/"
-          className="font-display text-lg font-semibold tracking-tight text-navy-950 focus-visible:outline-focus"
+          className={cn(
+            'font-display text-lg font-semibold tracking-tight focus-visible:outline-focus',
+            ink,
+          )}
         >
           {site.name}
         </NavLink>
@@ -36,8 +61,9 @@ export function SiteHeader() {
               to={item.to}
               className={({ isActive }) =>
                 cn(
-                  'rounded-md px-2.5 py-2 text-sm font-medium text-secondary transition-colors hover:text-navy-950',
-                  isActive && 'text-navy-950',
+                  'rounded-md px-2.5 py-2 text-sm font-medium transition-colors',
+                  muted,
+                  isActive && ink,
                 )
               }
             >
@@ -49,7 +75,7 @@ export function SiteHeader() {
         <div className="hidden items-center gap-2 md:flex">
           <a
             href={`tel:${site.phoneTel}`}
-            className="inline-flex h-11 items-center gap-2 rounded-md px-3 text-sm font-medium text-navy-950 hover:bg-grey-50 focus-visible:outline-focus"
+            className="inline-flex h-11 items-center gap-2 rounded-md px-3 text-sm font-medium text-ink hover:bg-white focus-visible:outline-focus"
           >
             <Phone className="size-4" aria-hidden />
             Call
@@ -61,7 +87,7 @@ export function SiteHeader() {
 
         <button
           type="button"
-          className="inline-flex size-11 items-center justify-center rounded-md border border-border text-navy-950 xl:hidden focus-visible:outline-focus"
+          className="inline-flex size-11 items-center justify-center rounded-md border border-border text-ink xl:hidden focus-visible:outline-focus"
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen((v) => !v)}
@@ -82,7 +108,7 @@ export function SiteHeader() {
                 key={item.to}
                 to={item.to}
                 onClick={() => setOpen(false)}
-                className="rounded-md px-3 py-3 text-base font-medium text-navy-950 hover:bg-grey-50"
+                className="rounded-md px-3 py-3 text-base font-medium text-ink hover:bg-white"
               >
                 {item.label}
               </NavLink>

@@ -4,6 +4,8 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
+  // GitHub Pages project site: https://dhanashreee194.github.io/engineers-art/
+  base: process.env.GITHUB_PAGES === 'true' ? '/engineers-art/' : '/',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

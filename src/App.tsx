@@ -93,11 +93,13 @@ const queryClient = new QueryClient({
   },
 })
 
+const routerBasename = import.meta.env.BASE_URL.replace(/\/$/, '') || undefined
+
 export default function App() {
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
+        <BrowserRouter basename={routerBasename}>
           <ScrollToTop />
           <RouteSeo />
           <PageShell>

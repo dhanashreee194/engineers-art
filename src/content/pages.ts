@@ -47,19 +47,19 @@ export const productsPage = {
       title: 'Interior systems',
       href: '/products/interior',
       body: 'Smart, space-saving furniture engineered in metal and hybrid constructions.',
-      image: 'https://www.artisticengineers.in/public/img/banner/1_2.jpg',
+      image: '/images/space-living.jpg',
     },
     {
       title: 'Exterior & fabrication',
       href: '/products/exterior',
       body: 'Safety doors, laser cutting, shades, and fabricated exterior systems.',
-      image: 'https://www.artisticengineers.in/public/img/banner/2_2.jpg',
+      image: '/images/space-office.jpg',
     },
     {
       title: 'Custom engineering',
       href: '/products/custom',
       body: 'When the catalog is not enough — we engineer to your brief.',
-      image: 'https://www.artisticengineers.in/public/img/banner/3_2.jpg',
+      image: '/images/hero-living.jpg',
     },
   ],
 } as const

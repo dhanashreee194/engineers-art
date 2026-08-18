@@ -1,4 +1,4 @@
-export const SITE_URL = 'https://www.artisticengineers.in'
+export const SITE_URL = 'https://dhanashreee194.github.io/engineers-art'
 
 export type PageSeo = {
   title: string
@@ -9,8 +9,7 @@ export type PageSeo = {
   noindex?: boolean
 }
 
-export const defaultOgImage =
-  'https://www.artisticengineers.in/public/img/slider/slider1.jpg'
+export const defaultOgImage = '/images/hero-bedroom.jpg'
 
 export const pageSeo: Record<string, PageSeo> = {
   '/': {

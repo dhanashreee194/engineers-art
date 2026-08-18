@@ -33,7 +33,7 @@ export function ButtonLink({
         'inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors duration-150',
         variants[variant],
         sizes[size],
-        /* Explicit cream on maroon — never inherit steel/ink body text */
+        /* White on black — never inherit mid-grey body text */
         variant === 'primary' && 'text-on-maroon hover:text-on-maroon',
         className,
       )}

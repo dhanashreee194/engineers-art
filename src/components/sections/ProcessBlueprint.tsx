@@ -12,11 +12,11 @@ import { Text } from '@/components/ui/Text'
 import { Magnetic } from '@/components/motion/Magnetic'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import { processSteps } from '@/content/home'
-import { color } from '@/styles/tokens'
+import { color, wireOpacity } from '@/styles/tokens'
 import { cn } from '@/lib/cn'
 
 /**
- * Flagship Maroon & Steel + Living Blueprint process path.
+ * Flagship Architect's studio + Living Blueprint process path.
  */
 export function ProcessBlueprint() {
   const reduced = usePrefersReducedMotion()
@@ -57,11 +57,16 @@ export function ProcessBlueprint() {
             aria-hidden
             preserveAspectRatio="none"
           >
-            <path d="M40 60 H960" stroke={color.coolGrey} strokeWidth="2" />
+            <path
+              d="M40 60 H960"
+              stroke={color.coolGrey}
+              strokeWidth="2"
+            />
             <motion.path
               d="M40 60 H960"
-              stroke={color.maroon}
+              stroke={color.wire}
               strokeWidth="2.5"
+              opacity={wireOpacity.strong}
               style={reduced ? { pathLength: 1 } : { pathLength }}
               strokeLinecap="square"
             />
@@ -70,8 +75,14 @@ export function ProcessBlueprint() {
                 key={x}
                 style={reduced ? undefined : { opacity: calloutOpacity }}
               >
-                <circle cx={x} cy={60} r="5" fill={color.ink} />
-                <circle cx={x} cy={60} r="3" fill={color.maroon} />
+                <circle cx={x} cy={60} r="5" fill={color.snow} />
+                <circle
+                  cx={x}
+                  cy={60}
+                  r="3"
+                  fill={color.wire}
+                  opacity={wireOpacity.strong}
+                />
                 <line
                   x1={x}
                   y1={20}
@@ -79,13 +90,14 @@ export function ProcessBlueprint() {
                   y2={48}
                   stroke={color.steel}
                   strokeWidth="1"
-                  opacity={0.8}
+                  opacity={0.55}
                 />
                 <text
                   x={x}
                   y={14}
                   textAnchor="middle"
-                  fill={color.maroon}
+                  fill={color.ink}
+                  opacity={0.55}
                   fontSize="11"
                   fontFamily="ui-monospace, monospace"
                 >
