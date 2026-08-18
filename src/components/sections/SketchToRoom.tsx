@@ -332,41 +332,43 @@ function RevolvingSlider({
   const next = (active + 1) % SLIDES.length
 
   return (
-    <div className="relative flex h-full min-h-0 w-full flex-col">
+    <div className="relative flex h-full min-h-[58vh] w-full flex-col md:min-h-[62vh]">
       {/* Evolving orbital ring */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center" aria-hidden>
+      <div
+        className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden"
+        aria-hidden
+      >
         <motion.div
-          className="absolute size-[min(88%,520px)] rounded-full border border-border/80"
+          className="absolute size-[min(92vmin,560px)] rounded-full border border-border"
           animate={reduced ? undefined : { rotate: 360 }}
           transition={
             reduced
               ? undefined
-              : { duration: 28, ease: 'linear', repeat: Infinity }
+              : { duration: 26, ease: 'linear', repeat: Infinity }
           }
         >
-          <span className="absolute left-1/2 top-0 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ink" />
-          <span className="absolute bottom-0 left-1/2 size-1.5 -translate-x-1/2 translate-y-1/2 rounded-full bg-steel" />
-          <span className="absolute left-0 top-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-steel" />
-          <span className="absolute right-0 top-1/2 size-1.5 -translate-y-1/2 translate-x-1/2 rounded-full bg-steel" />
+          <span className="absolute left-1/2 top-0 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ink" />
+          <span className="absolute bottom-0 left-1/2 size-2 -translate-x-1/2 translate-y-1/2 rounded-full bg-steel" />
+          <span className="absolute left-0 top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-steel" />
+          <span className="absolute right-0 top-1/2 size-2 -translate-y-1/2 translate-x-1/2 rounded-full bg-steel" />
         </motion.div>
         <motion.div
-          className="absolute size-[min(72%,420px)] rounded-full border border-dashed border-steel/35"
+          className="absolute size-[min(74vmin,440px)] rounded-full border border-dashed border-steel/40"
           animate={reduced ? undefined : { rotate: -360 }}
           transition={
             reduced
               ? undefined
-              : { duration: 40, ease: 'linear', repeat: Infinity }
+              : { duration: 38, ease: 'linear', repeat: Infinity }
           }
         />
       </div>
 
-      <div className="relative z-10 mx-auto flex h-full w-full max-w-5xl items-center gap-3 md:gap-5">
-        {/* Prev thumb */}
+      <div className="relative z-10 mx-auto flex min-h-0 w-full max-w-5xl flex-1 items-center gap-3 md:gap-5">
         <button
           type="button"
           aria-label="Previous room"
           onClick={() => onChange(prev)}
-          className="relative hidden h-[42%] w-[14%] shrink-0 overflow-hidden border border-border opacity-70 transition hover:opacity-100 focus-visible:outline-focus md:block"
+          className="relative hidden h-[48%] w-[13%] shrink-0 overflow-hidden border border-border opacity-75 transition hover:opacity-100 focus-visible:outline-focus md:block"
         >
           <img
             src={SLIDES[prev].image}
@@ -374,12 +376,11 @@ function RevolvingSlider({
             className="h-full w-full object-cover"
             loading="lazy"
           />
-          <div className="absolute inset-0 bg-ink/25" />
+          <div className="absolute inset-0 bg-ink/30" />
         </button>
 
-        {/* Main revolving stage */}
-        <div className="relative min-h-0 flex-1">
-          <div className="relative mx-auto aspect-[4/3] h-full max-h-full overflow-hidden border border-border bg-muted md:aspect-[16/10]">
+        <div className="relative min-h-0 flex-1 self-stretch py-2">
+          <div className="relative mx-auto h-full min-h-[42vh] w-full max-w-4xl overflow-hidden border border-border bg-muted shadow-md md:min-h-[48vh]">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={slide.id}
@@ -389,13 +390,13 @@ function RevolvingSlider({
                     ? false
                     : {
                         clipPath: 'circle(0% at 50% 50%)',
-                        scale: 1.18,
-                        rotate: -8,
-                        opacity: 0.5,
+                        scale: 1.2,
+                        rotate: -10,
+                        opacity: 0.45,
                       }
                 }
                 animate={{
-                  clipPath: 'circle(140% at 50% 50%)',
+                  clipPath: 'circle(145% at 50% 50%)',
                   scale: 1,
                   rotate: 0,
                   opacity: 1,
@@ -405,9 +406,9 @@ function RevolvingSlider({
                     ? undefined
                     : {
                         clipPath: 'circle(0% at 50% 50%)',
-                        scale: 0.92,
-                        rotate: 10,
-                        opacity: 0.4,
+                        scale: 0.9,
+                        rotate: 12,
+                        opacity: 0.35,
                       }
                 }
                 transition={{ duration: 1.05, ease: easeOutExpo }}
@@ -416,12 +417,12 @@ function RevolvingSlider({
                   src={slide.image}
                   alt={slide.alt}
                   className="h-full w-full object-cover"
-                  initial={reduced ? false : { scale: 1.12 }}
+                  initial={reduced ? false : { scale: 1.14 }}
                   animate={{ scale: 1 }}
-                  transition={{ duration: 1.35, ease: easeOutExpo }}
+                  transition={{ duration: 1.4, ease: easeOutExpo }}
                   fetchPriority="high"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/55 via-transparent to-page/15" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-page/10" />
               </motion.div>
             </AnimatePresence>
 
@@ -429,12 +430,12 @@ function RevolvingSlider({
               <motion.div
                 key={`label-${slide.id}`}
                 className="absolute bottom-4 left-4 z-10 md:bottom-6 md:left-6"
-                initial={reduced ? false : { opacity: 0, y: 16 }}
+                initial={reduced ? false : { opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
+                exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.45, ease: easeOutExpo }}
               >
-                <p className="font-mono text-[0.65rem] tracking-[0.16em] text-on-maroon/80">
+                <p className="font-mono text-[0.65rem] tracking-[0.16em] text-on-maroon/85">
                   {slide.code}
                 </p>
                 <p className="mt-1 font-display text-2xl font-semibold text-on-maroon md:text-3xl">
@@ -443,9 +444,8 @@ function RevolvingSlider({
               </motion.div>
             </AnimatePresence>
 
-            {/* Progress arc around stage */}
             <svg
-              className="pointer-events-none absolute inset-3 text-on-maroon/40 md:inset-4"
+              className="pointer-events-none absolute inset-2 text-on-maroon/50 md:inset-3"
               viewBox="0 0 100 100"
               fill="none"
               aria-hidden
@@ -464,7 +464,7 @@ function RevolvingSlider({
                 cy="50"
                 r="48"
                 stroke="currentColor"
-                strokeWidth="0.55"
+                strokeWidth="0.7"
                 strokeLinecap="round"
                 pathLength={1}
                 initial={{ pathLength: 0 }}
@@ -479,12 +479,11 @@ function RevolvingSlider({
           </div>
         </div>
 
-        {/* Next thumb */}
         <button
           type="button"
           aria-label="Next room"
           onClick={() => onChange(next)}
-          className="relative hidden h-[42%] w-[14%] shrink-0 overflow-hidden border border-border opacity-70 transition hover:opacity-100 focus-visible:outline-focus md:block"
+          className="relative hidden h-[48%] w-[13%] shrink-0 overflow-hidden border border-border opacity-75 transition hover:opacity-100 focus-visible:outline-focus md:block"
         >
           <img
             src={SLIDES[next].image}
@@ -492,11 +491,11 @@ function RevolvingSlider({
             className="h-full w-full object-cover"
             loading="lazy"
           />
-          <div className="absolute inset-0 bg-ink/25" />
+          <div className="absolute inset-0 bg-ink/30" />
         </button>
       </div>
 
-      <div className="relative z-10 mt-4 flex items-center justify-center gap-4">
+      <div className="relative z-10 mt-3 flex shrink-0 items-center justify-center gap-4 pb-1">
         <button
           type="button"
           aria-label="Previous"
@@ -514,8 +513,8 @@ function RevolvingSlider({
               aria-current={i === active}
               onClick={() => onChange(i)}
               className={cn(
-                'size-2 rounded-full transition',
-                i === active ? 'bg-ink scale-125' : 'bg-steel/40 hover:bg-steel',
+                'size-2.5 rounded-full transition',
+                i === active ? 'scale-125 bg-ink' : 'bg-steel/40 hover:bg-steel',
               )}
             />
           ))}
@@ -539,22 +538,32 @@ function RevolvingSlider({
 export function SketchToRoom() {
   const reduced = usePrefersReducedMotion()
   const [showBrand, setShowBrand] = useState(reduced)
-  const [sliderMode, setSliderMode] = useState(reduced)
+  const [sliderMode, setSliderMode] = useState(false)
   const [active, setActive] = useState(0)
   const progress = useMotionValue(reduced ? 1 : 0)
+  const enteredSlider = useRef(false)
 
   const brandOpacity = useTransform(progress, [0.82, 0.96], [0, 1])
   const brandY = useTransform(progress, [0.82, 0.96], [20, 0])
 
+  function enterSlider() {
+    if (enteredSlider.current) return
+    enteredSlider.current = true
+    setShowBrand(true)
+    setSliderMode(true)
+  }
+
   useMotionValueEvent(progress, 'change', (v) => {
     if (v >= 0.82) setShowBrand(true)
+    if (v >= 0.98) {
+      window.setTimeout(() => enterSlider(), 400)
+    }
   })
 
   useEffect(() => {
     if (reduced) {
       progress.set(1)
-      setShowBrand(true)
-      setSliderMode(true)
+      enterSlider()
       return
     }
 
@@ -562,13 +571,20 @@ export function SketchToRoom() {
       duration: TOTAL_S,
       ease: [0.33, 0.1, 0.25, 1],
       delay: 0.35,
-      onComplete: () => {
-        window.setTimeout(() => setSliderMode(true), 650)
-      },
     })
 
-    return () => controls.stop()
-  }, [reduced, progress])
+    // Hard fallback — don't rely only on animate onComplete (Strict Mode can cancel it)
+    const fallback = window.setTimeout(
+      () => enterSlider(),
+      Math.round((0.35 + TOTAL_S) * 1000 + 500),
+    )
+
+    return () => {
+      controls.stop()
+      window.clearTimeout(fallback)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount once for opener timeline
+  }, [])
 
   // Auto-advance revolving slider
   useEffect(() => {
@@ -589,9 +605,9 @@ export function SketchToRoom() {
       <div className="hero-mesh absolute inset-0" aria-hidden />
       <div className="blueprint-grid absolute inset-0 opacity-50" aria-hidden />
 
-      <div className="relative z-10 flex min-h-0 flex-1 flex-col px-3 pb-5 sm:px-5 lg:px-8">
+      <div className="relative z-10 flex min-h-0 flex-1 flex-col px-3 pb-4 sm:px-5 lg:px-8">
         <div className="mx-auto flex w-full max-w-[1400px] min-h-0 flex-1 flex-col gap-3 md:gap-4">
-          <div className="relative mt-3 min-h-[56vh] flex-1 sm:mt-4 md:min-h-0">
+          <div className="relative mt-2 min-h-[58vh] w-full flex-1 sm:mt-3 md:min-h-[62vh]">
             <AnimatePresence mode="wait">
               {!sliderMode ? (
                 <motion.div
@@ -602,10 +618,10 @@ export function SketchToRoom() {
                       ? undefined
                       : {
                           opacity: 0,
-                          scale: 0.88,
-                          rotate: -4,
-                          filter: 'blur(6px)',
-                          transition: { duration: 0.7, ease: easeOutExpo },
+                          scale: 0.82,
+                          rotate: -6,
+                          filter: 'blur(8px)',
+                          transition: { duration: 0.75, ease: easeOutExpo },
                         }
                   }
                 >
@@ -621,38 +637,47 @@ export function SketchToRoom() {
               ) : (
                 <motion.div
                   key="slider"
-                  className="absolute inset-0"
+                  className="absolute inset-0 flex flex-col"
                   initial={
                     reduced
                       ? false
                       : {
                           opacity: 0,
-                          scale: 0.86,
+                          scale: 0.78,
                           clipPath: 'circle(0% at 50% 50%)',
                         }
                   }
                   animate={{
                     opacity: 1,
                     scale: 1,
-                    clipPath: 'circle(150% at 50% 50%)',
+                    clipPath: 'circle(160% at 50% 50%)',
                   }}
-                  transition={{ duration: 1.1, ease: easeOutExpo }}
+                  transition={{ duration: 1.15, ease: easeOutExpo }}
                 >
                   <RevolvingSlider
                     reduced={reduced}
                     active={active}
-                    onChange={setActive}
+                    onChange={(i) => {
+                      setActive(i)
+                    }}
                   />
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
 
-          <div className="relative flex min-h-[7.5rem] shrink-0 items-center justify-center pb-2 pt-1 md:min-h-[9rem] md:pb-4">
+          <div className="relative flex min-h-[6.5rem] shrink-0 items-center justify-center pb-1 pt-1 md:min-h-[8rem]">
             {showBrand ? (
               <motion.div
                 className="flex flex-col items-center text-center"
-                style={reduced ? undefined : { opacity: brandOpacity, y: brandY }}
+                initial={reduced ? false : { opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: easeOutExpo }}
+                style={
+                  reduced || sliderMode
+                    ? undefined
+                    : { opacity: brandOpacity, y: brandY }
+                }
               >
                 <div>
                   <SplitHeading
