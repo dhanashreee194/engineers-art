@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react'
 import {
   AnimatePresence,
   animate,
   motion,
   useMotionValue,
   useMotionValueEvent,
+  useSpring,
   useTransform,
   type MotionValue,
 } from 'framer-motion'
@@ -318,212 +319,261 @@ function SketchPanel({
   )
 }
 
-function RevolvingSlider({
+function ImmersiveWorld({
   reduced,
   active,
   onChange,
+  brand,
 }: {
   reduced: boolean
   active: number
   onChange: (index: number) => void
+  brand: ReactNode
 }) {
   const slide = SLIDES[active]
   const prev = (active - 1 + SLIDES.length) % SLIDES.length
   const next = (active + 1) % SLIDES.length
+  const stageRef = useRef<HTMLDivElement>(null)
+  const mx = useMotionValue(0)
+  const my = useMotionValue(0)
+  const smx = useSpring(mx, { stiffness: 80, damping: 20, mass: 0.35 })
+  const smy = useSpring(my, { stiffness: 80, damping: 20, mass: 0.35 })
+  const px = useTransform(smx, [-0.5, 0.5], [18, -18])
+  const py = useTransform(smy, [-0.5, 0.5], [12, -12])
+  const bgX = useTransform(smx, [-0.5, 0.5], [28, -28])
+  const bgY = useTransform(smy, [-0.5, 0.5], [18, -18])
+
+  function onMove(e: MouseEvent<HTMLDivElement>) {
+    if (reduced || !stageRef.current) return
+    const r = stageRef.current.getBoundingClientRect()
+    mx.set((e.clientX - r.left) / r.width - 0.5)
+    my.set((e.clientY - r.top) / r.height - 0.5)
+  }
 
   return (
-    <div className="relative flex h-full min-h-[58vh] w-full flex-col md:min-h-[62vh]">
-      {/* Evolving orbital ring */}
+    <div
+      ref={stageRef}
+      className="absolute inset-0 overflow-hidden bg-ink"
+      onMouseMove={onMove}
+      onMouseLeave={() => {
+        mx.set(0)
+        my.set(0)
+      }}
+    >
+      {/* Deep world / blurred hinterland */}
+      <motion.div
+        className="absolute inset-[-12%] scale-110"
+        style={reduced ? undefined : { x: bgX, y: bgY }}
+        aria-hidden
+      >
+        <AnimatePresence mode="sync" initial={false}>
+          <motion.img
+            key={`bg-${slide.id}`}
+            src={slide.image}
+            alt=""
+            className="h-full w-full object-cover blur-2xl brightness-[0.45] saturate-125"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+          />
+        </AnimatePresence>
+      </motion.div>
+
+      {/* Atmosphere wash */}
       <div
-        className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,rgba(20,20,20,0.55)_100%)]"
+        aria-hidden
+      />
+
+      {/* Revolving portal rim */}
+      <div
+        className="pointer-events-none absolute inset-0 flex items-center justify-center"
         aria-hidden
       >
         <motion.div
-          className="absolute size-[min(92vmin,560px)] rounded-full border border-border"
+          className="absolute size-[min(92vmin,820px)] rounded-full border border-white/20"
           animate={reduced ? undefined : { rotate: 360 }}
           transition={
             reduced
               ? undefined
-              : { duration: 26, ease: 'linear', repeat: Infinity }
+              : { duration: 32, ease: 'linear', repeat: Infinity }
           }
         >
-          <span className="absolute left-1/2 top-0 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ink" />
-          <span className="absolute bottom-0 left-1/2 size-2 -translate-x-1/2 translate-y-1/2 rounded-full bg-steel" />
-          <span className="absolute left-0 top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-steel" />
-          <span className="absolute right-0 top-1/2 size-2 -translate-y-1/2 translate-x-1/2 rounded-full bg-steel" />
+          <span className="absolute left-1/2 top-0 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white" />
+          <span className="absolute bottom-[12%] left-[8%] size-1.5 rounded-full bg-white/70" />
+          <span className="absolute right-[10%] top-[30%] size-1.5 rounded-full bg-white/60" />
         </motion.div>
         <motion.div
-          className="absolute size-[min(74vmin,440px)] rounded-full border border-dashed border-steel/40"
+          className="absolute size-[min(78vmin,680px)] rounded-full border border-dashed border-white/25"
           animate={reduced ? undefined : { rotate: -360 }}
           transition={
             reduced
               ? undefined
-              : { duration: 38, ease: 'linear', repeat: Infinity }
+              : { duration: 48, ease: 'linear', repeat: Infinity }
           }
         />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-0 w-full max-w-5xl flex-1 items-center gap-3 md:gap-5">
-        <button
-          type="button"
-          aria-label="Previous room"
-          onClick={() => onChange(prev)}
-          className="relative hidden h-[48%] w-[13%] shrink-0 overflow-hidden border border-border opacity-75 transition hover:opacity-100 focus-visible:outline-focus md:block"
+      {/* Real view portal — full immersive room */}
+      <motion.div
+        className="absolute inset-[3%] overflow-hidden rounded-[clamp(1.25rem,3vw,2.5rem)] border border-white/25 shadow-[0_0_80px_rgba(0,0,0,0.45)] md:inset-[4%_5%]"
+        style={reduced ? undefined : { x: px, y: py }}
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={slide.id}
+            className="absolute inset-0"
+            initial={
+              reduced
+                ? false
+                : {
+                    clipPath: 'circle(0% at 50% 50%)',
+                    scale: 1.25,
+                    filter: 'blur(12px)',
+                  }
+            }
+            animate={{
+              clipPath: 'circle(150% at 50% 50%)',
+              scale: 1,
+              filter: 'blur(0px)',
+            }}
+            exit={
+              reduced
+                ? undefined
+                : {
+                    clipPath: 'circle(0% at 80% 50%)',
+                    scale: 1.08,
+                    filter: 'blur(8px)',
+                    opacity: 0.5,
+                  }
+            }
+            transition={{ duration: 1.15, ease: easeOutExpo }}
+          >
+            <motion.img
+              src={slide.image}
+              alt={slide.alt}
+              className="h-full w-full object-cover"
+              initial={reduced ? false : { scale: 1.16 }}
+              animate={{ scale: 1.04 }}
+              transition={{ duration: 6, ease: 'linear' }}
+              fetchPriority="high"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-ink/10 to-ink/25" />
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,transparent_35%,rgba(0,0,0,0.35)_100%)]" />
+          </motion.div>
+        </AnimatePresence>
+
+        {/* HUD: room identity */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`hud-${slide.id}`}
+            className="absolute left-5 top-5 z-20 md:left-8 md:top-8"
+            initial={reduced ? false : { opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.45, ease: easeOutExpo }}
+          >
+            <p className="text-[0.65rem] font-medium uppercase tracking-[0.22em] text-on-maroon/80">
+              Entered space · Live view
+            </p>
+            <p className="mt-1 font-mono text-xs tracking-[0.16em] text-on-maroon/70">
+              {slide.code}
+            </p>
+            <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-on-maroon md:text-5xl">
+              {slide.label}
+            </h2>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Progress ring */}
+        <svg
+          className="pointer-events-none absolute right-5 top-5 size-14 text-on-maroon/70 md:right-8 md:top-8 md:size-16"
+          viewBox="0 0 100 100"
+          fill="none"
+          aria-hidden
         >
-          <img
-            src={SLIDES[prev].image}
-            alt=""
-            className="h-full w-full object-cover"
-            loading="lazy"
+          <circle
+            cx="50"
+            cy="50"
+            r="42"
+            stroke="currentColor"
+            strokeWidth="2"
+            opacity="0.25"
           />
-          <div className="absolute inset-0 bg-ink/30" />
-        </button>
+          <motion.circle
+            key={`arc-${active}`}
+            cx="50"
+            cy="50"
+            r="42"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            pathLength={1}
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{
+              duration: reduced ? 0 : SLIDE_MS / 1000,
+              ease: 'linear',
+            }}
+            style={{ rotate: -90, transformOrigin: '50% 50%' }}
+          />
+        </svg>
 
-        <div className="relative min-h-0 flex-1 self-stretch py-2">
-          <div className="relative mx-auto h-full min-h-[42vh] w-full max-w-4xl overflow-hidden border border-border bg-muted shadow-md md:min-h-[48vh]">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={slide.id}
-                className="absolute inset-0"
-                initial={
-                  reduced
-                    ? false
-                    : {
-                        clipPath: 'circle(0% at 50% 50%)',
-                        scale: 1.2,
-                        rotate: -10,
-                        opacity: 0.45,
-                      }
-                }
-                animate={{
-                  clipPath: 'circle(145% at 50% 50%)',
-                  scale: 1,
-                  rotate: 0,
-                  opacity: 1,
-                }}
-                exit={
-                  reduced
-                    ? undefined
-                    : {
-                        clipPath: 'circle(0% at 50% 50%)',
-                        scale: 0.9,
-                        rotate: 12,
-                        opacity: 0.35,
-                      }
-                }
-                transition={{ duration: 1.05, ease: easeOutExpo }}
-              >
-                <motion.img
-                  src={slide.image}
-                  alt={slide.alt}
-                  className="h-full w-full object-cover"
-                  initial={reduced ? false : { scale: 1.14 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 1.4, ease: easeOutExpo }}
-                  fetchPriority="high"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-page/10" />
-              </motion.div>
-            </AnimatePresence>
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`label-${slide.id}`}
-                className="absolute bottom-4 left-4 z-10 md:bottom-6 md:left-6"
-                initial={reduced ? false : { opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.45, ease: easeOutExpo }}
-              >
-                <p className="font-mono text-[0.65rem] tracking-[0.16em] text-on-maroon/85">
-                  {slide.code}
-                </p>
-                <p className="mt-1 font-display text-2xl font-semibold text-on-maroon md:text-3xl">
-                  {slide.label}
-                </p>
-              </motion.div>
-            </AnimatePresence>
-
-            <svg
-              className="pointer-events-none absolute inset-2 text-on-maroon/50 md:inset-3"
-              viewBox="0 0 100 100"
-              fill="none"
-              aria-hidden
-            >
-              <circle
-                cx="50"
-                cy="50"
-                r="48"
-                stroke="currentColor"
-                strokeWidth="0.35"
-                opacity="0.35"
-              />
-              <motion.circle
-                key={`arc-${active}`}
-                cx="50"
-                cy="50"
-                r="48"
-                stroke="currentColor"
-                strokeWidth="0.7"
-                strokeLinecap="round"
-                pathLength={1}
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{
-                  duration: reduced ? 0 : SLIDE_MS / 1000,
-                  ease: 'linear',
-                }}
-                style={{ rotate: -90, transformOrigin: '50% 50%' }}
-              />
-            </svg>
-          </div>
+        {/* Brand + CTAs over the world */}
+        <div className="absolute inset-x-0 bottom-0 z-20 px-5 pb-6 pt-20 md:px-10 md:pb-8">
+          {brand}
         </div>
+      </motion.div>
 
+      {/* World selectors — circular portals */}
+      <div className="absolute bottom-[7.5rem] left-1/2 z-30 flex -translate-x-1/2 items-end gap-3 md:bottom-[8.5rem] md:gap-4">
         <button
           type="button"
-          aria-label="Next room"
-          onClick={() => onChange(next)}
-          className="relative hidden h-[48%] w-[13%] shrink-0 overflow-hidden border border-border opacity-75 transition hover:opacity-100 focus-visible:outline-focus md:block"
-        >
-          <img
-            src={SLIDES[next].image}
-            alt=""
-            className="h-full w-full object-cover"
-            loading="lazy"
-          />
-          <div className="absolute inset-0 bg-ink/30" />
-        </button>
-      </div>
-
-      <div className="relative z-10 mt-3 flex shrink-0 items-center justify-center gap-4 pb-1">
-        <button
-          type="button"
-          aria-label="Previous"
+          aria-label="Previous space"
           onClick={() => onChange(prev)}
-          className="inline-flex size-10 items-center justify-center border border-border bg-page text-ink transition hover:bg-ink hover:text-on-maroon focus-visible:outline-focus"
+          className="mb-3 inline-flex size-9 items-center justify-center rounded-full border border-white/30 bg-ink/40 text-on-maroon backdrop-blur-sm transition hover:bg-ink/70 focus-visible:outline-focus"
         >
           <ChevronLeft className="size-4" />
         </button>
-        <div className="flex items-center gap-2">
-          {SLIDES.map((s, i) => (
+
+        {SLIDES.map((s, i) => {
+          const selected = i === active
+          return (
             <button
               key={s.id}
               type="button"
-              aria-label={`Show ${s.label}`}
-              aria-current={i === active}
+              aria-label={`Enter ${s.label}`}
+              aria-current={selected}
               onClick={() => onChange(i)}
               className={cn(
-                'size-2.5 rounded-full transition',
-                i === active ? 'scale-125 bg-ink' : 'bg-steel/40 hover:bg-steel',
+                'relative overflow-hidden rounded-full border transition focus-visible:outline-focus',
+                selected
+                  ? 'size-14 border-white shadow-[0_0_0_3px_rgba(255,255,255,0.25)] md:size-16'
+                  : 'size-10 border-white/35 opacity-75 hover:opacity-100 md:size-12',
               )}
-            />
-          ))}
-        </div>
+            >
+              <img
+                src={s.image}
+                alt=""
+                className="h-full w-full object-cover"
+                loading="lazy"
+              />
+              {selected ? (
+                <motion.span
+                  className="absolute inset-0 rounded-full border-2 border-white/80"
+                  layoutId="world-ring"
+                />
+              ) : null}
+            </button>
+          )
+        })}
+
         <button
           type="button"
-          aria-label="Next"
+          aria-label="Next space"
           onClick={() => onChange(next)}
-          className="inline-flex size-10 items-center justify-center border border-border bg-page text-ink transition hover:bg-ink hover:text-on-maroon focus-visible:outline-focus"
+          className="mb-3 inline-flex size-9 items-center justify-center rounded-full border border-white/30 bg-ink/40 text-on-maroon backdrop-blur-sm transition hover:bg-ink/70 focus-visible:outline-focus"
         >
           <ChevronRight className="size-4" />
         </button>
@@ -533,7 +583,7 @@ function RevolvingSlider({
 }
 
 /**
- * Opening: three pencils draw → photos resolve → revolving circular slider.
+ * Opening: three pencils draw → photos resolve → immersive world slider.
  */
 export function SketchToRoom() {
   const reduced = usePrefersReducedMotion()
@@ -573,7 +623,6 @@ export function SketchToRoom() {
       delay: 0.35,
     })
 
-    // Hard fallback — don't rely only on animate onComplete (Strict Mode can cancel it)
     const fallback = window.setTimeout(
       () => enterSlider(),
       Math.round((0.35 + TOTAL_S) * 1000 + 500),
@@ -586,7 +635,6 @@ export function SketchToRoom() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- mount once for opener timeline
   }, [])
 
-  // Auto-advance revolving slider
   useEffect(() => {
     if (!sliderMode || reduced) return
     const id = window.setInterval(() => {
@@ -597,113 +645,138 @@ export function SketchToRoom() {
 
   const { primaryCta, secondaryCta } = homeHero
 
+  const brandBlock = showBrand ? (
+    <motion.div
+      className="mx-auto flex max-w-xl flex-col items-center text-center"
+      initial={reduced ? false : { opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.65, ease: easeOutExpo }}
+    >
+      <div>
+        <SplitHeading
+          as="h1"
+          text={site.name}
+          className={cn(
+            'justify-center font-display text-[clamp(1.6rem,3.8vw,2.75rem)] font-semibold tracking-tight',
+            sliderMode ? 'text-on-maroon' : 'text-ink',
+          )}
+          delay={0.05}
+        />
+      </div>
+      <p
+        className={cn(
+          'mt-1.5 max-w-lg font-display text-sm md:text-base',
+          sliderMode ? 'text-on-maroon/85' : 'text-steel',
+        )}
+      >
+        {site.tagline}
+      </p>
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+        <Magnetic>
+          <ButtonLink to={primaryCta.href}>{primaryCta.label}</ButtonLink>
+        </Magnetic>
+        <Magnetic strength={0.2}>
+          <ButtonLink
+            to={secondaryCta.href}
+            variant="secondary"
+            className={
+              sliderMode
+                ? 'border-on-maroon/45 bg-page/15 text-on-maroon backdrop-blur-sm hover:bg-page hover:text-ink'
+                : undefined
+            }
+          >
+            {secondaryCta.label}
+          </ButtonLink>
+        </Magnetic>
+      </div>
+    </motion.div>
+  ) : null
+
   return (
     <section
       aria-label={`${site.name} — sketch to finished interiors`}
-      className="relative flex min-h-dvh flex-col overflow-hidden bg-page pt-[4.5rem] md:pt-20"
+      className={cn(
+        'relative flex min-h-dvh flex-col overflow-hidden pt-[4.5rem] md:pt-20',
+        sliderMode ? 'bg-ink' : 'bg-page',
+      )}
     >
-      <div className="hero-mesh absolute inset-0" aria-hidden />
-      <div className="blueprint-grid absolute inset-0 opacity-50" aria-hidden />
+      {!sliderMode ? (
+        <>
+          <div className="hero-mesh absolute inset-0" aria-hidden />
+          <div className="blueprint-grid absolute inset-0 opacity-50" aria-hidden />
+        </>
+      ) : null}
 
-      <div className="relative z-10 flex min-h-0 flex-1 flex-col px-3 pb-4 sm:px-5 lg:px-8">
-        <div className="mx-auto flex w-full max-w-[1400px] min-h-0 flex-1 flex-col gap-3 md:gap-4">
-          <div className="relative mt-2 min-h-[58vh] w-full flex-1 sm:mt-3 md:min-h-[62vh]">
-            <AnimatePresence mode="wait">
-              {!sliderMode ? (
-                <motion.div
-                  key="trio"
-                  className="absolute inset-0 grid grid-cols-3 gap-1.5 sm:gap-2.5 md:gap-3"
-                  exit={
-                    reduced
-                      ? undefined
-                      : {
-                          opacity: 0,
-                          scale: 0.82,
-                          rotate: -6,
-                          filter: 'blur(8px)',
-                          transition: { duration: 0.75, ease: easeOutExpo },
-                        }
-                  }
-                >
-                  {PANELS.map((panel) => (
-                    <SketchPanel
-                      key={panel.id}
-                      panel={panel}
-                      reduced={reduced}
-                      sharedProgress={progress}
-                    />
-                  ))}
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="slider"
-                  className="absolute inset-0 flex flex-col"
-                  initial={
-                    reduced
-                      ? false
-                      : {
-                          opacity: 0,
-                          scale: 0.78,
-                          clipPath: 'circle(0% at 50% 50%)',
-                        }
-                  }
-                  animate={{
-                    opacity: 1,
-                    scale: 1,
-                    clipPath: 'circle(160% at 50% 50%)',
-                  }}
-                  transition={{ duration: 1.15, ease: easeOutExpo }}
-                >
-                  <RevolvingSlider
-                    reduced={reduced}
-                    active={active}
-                    onChange={(i) => {
-                      setActive(i)
-                    }}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          <div className="relative flex min-h-[6.5rem] shrink-0 items-center justify-center pb-1 pt-1 md:min-h-[8rem]">
-            {showBrand ? (
-              <motion.div
-                className="flex flex-col items-center text-center"
-                initial={reduced ? false : { opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: easeOutExpo }}
-                style={
-                  reduced || sliderMode
-                    ? undefined
-                    : { opacity: brandOpacity, y: brandY }
-                }
-              >
-                <div>
-                  <SplitHeading
-                    as="h1"
-                    text={site.name}
-                    className="justify-center font-display text-[clamp(1.6rem,3.8vw,2.75rem)] font-semibold tracking-tight text-ink"
-                    delay={0.05}
-                  />
+      <div className="relative z-10 flex min-h-0 flex-1 flex-col">
+        <AnimatePresence mode="wait">
+          {!sliderMode ? (
+            <motion.div
+              key="trio"
+              className="flex min-h-0 flex-1 flex-col px-3 pb-4 sm:px-5 lg:px-8"
+              exit={
+                reduced
+                  ? undefined
+                  : {
+                      opacity: 0,
+                      scale: 0.92,
+                      filter: 'blur(10px)',
+                      transition: { duration: 0.7, ease: easeOutExpo },
+                    }
+              }
+            >
+              <div className="mx-auto flex w-full max-w-[1400px] min-h-0 flex-1 flex-col gap-3 md:gap-4">
+                <div className="relative mt-2 min-h-[58vh] w-full flex-1 sm:mt-3 md:min-h-[62vh]">
+                  <div className="absolute inset-0 grid grid-cols-3 gap-1.5 sm:gap-2.5 md:gap-3">
+                    {PANELS.map((panel) => (
+                      <SketchPanel
+                        key={panel.id}
+                        panel={panel}
+                        reduced={reduced}
+                        sharedProgress={progress}
+                      />
+                    ))}
+                  </div>
                 </div>
-                <p className="mt-1.5 max-w-lg font-display text-sm text-steel md:text-base">
-                  {site.tagline}
-                </p>
-                <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-                  <Magnetic>
-                    <ButtonLink to={primaryCta.href}>{primaryCta.label}</ButtonLink>
-                  </Magnetic>
-                  <Magnetic strength={0.2}>
-                    <ButtonLink to={secondaryCta.href} variant="secondary">
-                      {secondaryCta.label}
-                    </ButtonLink>
-                  </Magnetic>
+                <div className="relative flex min-h-[6.5rem] shrink-0 items-center justify-center pb-1 pt-1 md:min-h-[8rem]">
+                  <motion.div
+                    style={
+                      reduced
+                        ? undefined
+                        : { opacity: brandOpacity, y: brandY }
+                    }
+                  >
+                    {brandBlock}
+                  </motion.div>
                 </div>
-              </motion.div>
-            ) : null}
-          </div>
-        </div>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="world"
+              className="relative min-h-0 flex-1"
+              initial={
+                reduced
+                  ? false
+                  : {
+                      opacity: 0,
+                      clipPath: 'circle(0% at 50% 50%)',
+                    }
+              }
+              animate={{
+                opacity: 1,
+                clipPath: 'circle(160% at 50% 50%)',
+              }}
+              transition={{ duration: 1.2, ease: easeOutExpo }}
+            >
+              <ImmersiveWorld
+                reduced={reduced}
+                active={active}
+                onChange={setActive}
+                brand={brandBlock}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   )
