@@ -1,4 +1,4 @@
-export const SITE_URL = 'https://www.artisticengineers.in'
+export const SITE_URL = 'https://dhanashreee194.github.io/engineers-art'
 
 export type PageSeo = {
   title: string

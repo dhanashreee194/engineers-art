@@ -30,8 +30,8 @@ export function SiteHeader() {
   }, [])
 
   const overHero = cinematicHome && !scrolled && !open
-  const ink = overHero ? 'text-on-maroon' : 'text-ink'
-  const muted = overHero ? 'text-on-maroon/75 hover:text-on-maroon' : 'text-secondary hover:text-ink'
+  const ink = 'text-ink'
+  const muted = 'text-secondary hover:text-ink'
 
   return (
     <header
@@ -39,7 +39,7 @@ export function SiteHeader() {
         'z-50 transition-colors duration-300',
         cinematicHome ? 'fixed inset-x-0 top-0' : 'sticky top-0',
         overHero
-          ? 'border-b border-transparent bg-transparent'
+          ? 'border-b border-border/40 bg-page/70 backdrop-blur-[12px]'
           : 'border-b border-border/80 bg-page/90 backdrop-blur-[12px]',
       )}
     >
@@ -75,35 +75,19 @@ export function SiteHeader() {
         <div className="hidden items-center gap-2 md:flex">
           <a
             href={`tel:${site.phoneTel}`}
-            className={cn(
-              'inline-flex h-11 items-center gap-2 rounded-md px-3 text-sm font-medium focus-visible:outline-focus',
-              overHero ? 'text-on-maroon hover:bg-on-maroon/10' : 'text-ink hover:bg-white',
-            )}
+            className="inline-flex h-11 items-center gap-2 rounded-md px-3 text-sm font-medium text-ink hover:bg-white focus-visible:outline-focus"
           >
             <Phone className="size-4" aria-hidden />
             Call
           </a>
-          <ButtonLink
-            to="/contact?intent=quote"
-            size="sm"
-            className={
-              overHero
-                ? 'bg-on-maroon text-ink hover:bg-snow'
-                : undefined
-            }
-          >
+          <ButtonLink to="/contact?intent=quote" size="sm">
             Request Quote
           </ButtonLink>
         </div>
 
         <button
           type="button"
-          className={cn(
-            'inline-flex size-11 items-center justify-center rounded-md border xl:hidden focus-visible:outline-focus',
-            overHero
-              ? 'border-on-maroon/40 text-on-maroon'
-              : 'border-border text-ink',
-          )}
+          className="inline-flex size-11 items-center justify-center rounded-md border border-border text-ink xl:hidden focus-visible:outline-focus"
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen((v) => !v)}

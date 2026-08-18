@@ -11,14 +11,16 @@ import {
   TrustBar,
   WhyUs,
 } from '@/components/sections'
-import { HeroCinematic } from '@/components/sections/HeroCinematic'
 import { HorizontalSpaces } from '@/components/sections/HorizontalSpaces'
+import { RoomTicker } from '@/components/sections/RoomTicker'
+import { SketchToRoom } from '@/components/sections/SketchToRoom'
 import { ProcessBlueprint } from '@/components/sections/ProcessBlueprint'
 
 export function HomePage() {
   return (
     <>
-      <HeroCinematic />
+      <SketchToRoom />
+      <RoomTicker />
       <HorizontalSpaces />
       <TrustBar />
       <AboutTeaser />

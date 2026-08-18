@@ -198,6 +198,16 @@
     background-color: var(--color-action-hover);
     color: var(--color-on-action);
   }
+
+  /* Soft interior “light sweep” helper */
+  .room-shine {
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      color-mix(in srgb, var(--color-white) 35%, transparent) 50%,
+      transparent 60%
+    );
+  }
 }
 
 html.lenis,

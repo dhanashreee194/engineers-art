@@ -5,6 +5,7 @@ import { Heading } from '@/components/ui/Heading'
 import { Media } from '@/components/ui/Media'
 import { Section } from '@/components/ui/Section'
 import { Text } from '@/components/ui/Text'
+import { CurtainReveal } from '@/components/motion/CurtainReveal'
 import { FadeIn, Stagger, StaggerItem } from '@/components/motion/Reveal'
 import { featuredProjects } from '@/content/home'
 
@@ -39,12 +40,14 @@ export function ProjectsGrid({ featured = true }: { featured?: boolean }) {
               to={`/projects/${project.slug}`}
               className="group block focus-visible:outline-focus"
             >
-              <Media
-                src={project.image}
-                alt={`${project.title} — ${project.outcome}`}
-                aspect="3/2"
-                className="transition duration-300 group-hover:brightness-110"
-              />
+              <CurtainReveal>
+                <Media
+                  src={project.image}
+                  alt={`${project.title} — ${project.outcome}`}
+                  aspect="3/2"
+                  className="transition duration-500 group-hover:scale-[1.03] group-hover:brightness-110"
+                />
+              </CurtainReveal>
               <div className="mt-4 space-y-2">
                 <Badge tone="inverse">{project.sector}</Badge>
                 <h3 className="font-display text-xl font-semibold text-ink">
