@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import {
+  AnimatePresence,
   animate,
   motion,
   useMotionValue,
@@ -7,6 +8,7 @@ import {
   useTransform,
   type MotionValue,
 } from 'framer-motion'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { ButtonLink } from '@/components/ui/ButtonLink'
 import { Magnetic } from '@/components/motion/Magnetic'
 import { SplitHeading } from '@/components/motion/SplitHeading'
@@ -14,11 +16,14 @@ import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import { homeHero } from '@/content/home'
 import { media, site } from '@/content/site'
 import { color } from '@/styles/tokens'
+import { cn } from '@/lib/cn'
+import { easeOutExpo } from '@/lib/motion'
 
 /** Slower opening timeline so the draw can be read */
 const DRAW_MS = 5600
 const REVEAL_MS = 2400
 const TOTAL_S = (DRAW_MS + REVEAL_MS) / 1000
+const SLIDE_MS = 5200
 
 type PanelConfig = {
   id: string
@@ -95,6 +100,31 @@ const PANELS: PanelConfig[] = [
   },
 ]
 
+/** Extra rooms for the revolving slider after sketch resolve */
+const SLIDES = [
+  ...PANELS.map((p) => ({
+    id: p.id,
+    label: p.label,
+    code: p.code,
+    image: p.image,
+    alt: p.alt,
+  })),
+  {
+    id: 'lounge',
+    label: 'Lounge',
+    code: '04 · LOUNGE',
+    image: media.about,
+    alt: 'Finished lounge interior',
+  },
+  {
+    id: 'suite',
+    label: 'Suite',
+    code: '05 · SUITE',
+    image: media.workshop,
+    alt: 'Finished suite interior',
+  },
+]
+
 function PencilTip() {
   return (
     <g transform="rotate(-28)" aria-hidden>
@@ -140,14 +170,12 @@ function SketchPanel({
 }: {
   panel: PanelConfig
   reduced: boolean
-  /** Parent-driven 0→1 progress; panel applies its own delay via transforms */
   sharedProgress: MotionValue<number>
 }) {
   const guideRef = useRef<SVGPathElement>(null)
   const pencilRef = useRef<SVGGElement>(null)
   const pencilOpacity = useMotionValue(0)
 
-  // Map shared timeline so each panel starts after its delay, still finishes together
   const local = useTransform(sharedProgress, (v) => {
     if (reduced) return 1
     const start = panel.delay / TOTAL_S
@@ -184,7 +212,7 @@ function SketchPanel({
   }, [reduced, pencilOpacity])
 
   return (
-    <div className="relative min-h-0 flex-1 overflow-hidden border border-border bg-white">
+    <div className="relative h-full min-h-0 w-full overflow-hidden border border-border bg-white">
       <motion.img
         src={panel.image}
         alt={panel.alt}
@@ -290,13 +318,229 @@ function SketchPanel({
   )
 }
 
+function RevolvingSlider({
+  reduced,
+  active,
+  onChange,
+}: {
+  reduced: boolean
+  active: number
+  onChange: (index: number) => void
+}) {
+  const slide = SLIDES[active]
+  const prev = (active - 1 + SLIDES.length) % SLIDES.length
+  const next = (active + 1) % SLIDES.length
+
+  return (
+    <div className="relative flex h-full min-h-0 w-full flex-col">
+      {/* Evolving orbital ring */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center" aria-hidden>
+        <motion.div
+          className="absolute size-[min(88%,520px)] rounded-full border border-border/80"
+          animate={reduced ? undefined : { rotate: 360 }}
+          transition={
+            reduced
+              ? undefined
+              : { duration: 28, ease: 'linear', repeat: Infinity }
+          }
+        >
+          <span className="absolute left-1/2 top-0 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ink" />
+          <span className="absolute bottom-0 left-1/2 size-1.5 -translate-x-1/2 translate-y-1/2 rounded-full bg-steel" />
+          <span className="absolute left-0 top-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-steel" />
+          <span className="absolute right-0 top-1/2 size-1.5 -translate-y-1/2 translate-x-1/2 rounded-full bg-steel" />
+        </motion.div>
+        <motion.div
+          className="absolute size-[min(72%,420px)] rounded-full border border-dashed border-steel/35"
+          animate={reduced ? undefined : { rotate: -360 }}
+          transition={
+            reduced
+              ? undefined
+              : { duration: 40, ease: 'linear', repeat: Infinity }
+          }
+        />
+      </div>
+
+      <div className="relative z-10 mx-auto flex h-full w-full max-w-5xl items-center gap-3 md:gap-5">
+        {/* Prev thumb */}
+        <button
+          type="button"
+          aria-label="Previous room"
+          onClick={() => onChange(prev)}
+          className="relative hidden h-[42%] w-[14%] shrink-0 overflow-hidden border border-border opacity-70 transition hover:opacity-100 focus-visible:outline-focus md:block"
+        >
+          <img
+            src={SLIDES[prev].image}
+            alt=""
+            className="h-full w-full object-cover"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-ink/25" />
+        </button>
+
+        {/* Main revolving stage */}
+        <div className="relative min-h-0 flex-1">
+          <div className="relative mx-auto aspect-[4/3] h-full max-h-full overflow-hidden border border-border bg-muted md:aspect-[16/10]">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={slide.id}
+                className="absolute inset-0"
+                initial={
+                  reduced
+                    ? false
+                    : {
+                        clipPath: 'circle(0% at 50% 50%)',
+                        scale: 1.18,
+                        rotate: -8,
+                        opacity: 0.5,
+                      }
+                }
+                animate={{
+                  clipPath: 'circle(140% at 50% 50%)',
+                  scale: 1,
+                  rotate: 0,
+                  opacity: 1,
+                }}
+                exit={
+                  reduced
+                    ? undefined
+                    : {
+                        clipPath: 'circle(0% at 50% 50%)',
+                        scale: 0.92,
+                        rotate: 10,
+                        opacity: 0.4,
+                      }
+                }
+                transition={{ duration: 1.05, ease: easeOutExpo }}
+              >
+                <motion.img
+                  src={slide.image}
+                  alt={slide.alt}
+                  className="h-full w-full object-cover"
+                  initial={reduced ? false : { scale: 1.12 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 1.35, ease: easeOutExpo }}
+                  fetchPriority="high"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/55 via-transparent to-page/15" />
+              </motion.div>
+            </AnimatePresence>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`label-${slide.id}`}
+                className="absolute bottom-4 left-4 z-10 md:bottom-6 md:left-6"
+                initial={reduced ? false : { opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.45, ease: easeOutExpo }}
+              >
+                <p className="font-mono text-[0.65rem] tracking-[0.16em] text-on-maroon/80">
+                  {slide.code}
+                </p>
+                <p className="mt-1 font-display text-2xl font-semibold text-on-maroon md:text-3xl">
+                  {slide.label}
+                </p>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Progress arc around stage */}
+            <svg
+              className="pointer-events-none absolute inset-3 text-on-maroon/40 md:inset-4"
+              viewBox="0 0 100 100"
+              fill="none"
+              aria-hidden
+            >
+              <circle
+                cx="50"
+                cy="50"
+                r="48"
+                stroke="currentColor"
+                strokeWidth="0.35"
+                opacity="0.35"
+              />
+              <motion.circle
+                key={`arc-${active}`}
+                cx="50"
+                cy="50"
+                r="48"
+                stroke="currentColor"
+                strokeWidth="0.55"
+                strokeLinecap="round"
+                pathLength={1}
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{
+                  duration: reduced ? 0 : SLIDE_MS / 1000,
+                  ease: 'linear',
+                }}
+                style={{ rotate: -90, transformOrigin: '50% 50%' }}
+              />
+            </svg>
+          </div>
+        </div>
+
+        {/* Next thumb */}
+        <button
+          type="button"
+          aria-label="Next room"
+          onClick={() => onChange(next)}
+          className="relative hidden h-[42%] w-[14%] shrink-0 overflow-hidden border border-border opacity-70 transition hover:opacity-100 focus-visible:outline-focus md:block"
+        >
+          <img
+            src={SLIDES[next].image}
+            alt=""
+            className="h-full w-full object-cover"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-ink/25" />
+        </button>
+      </div>
+
+      <div className="relative z-10 mt-4 flex items-center justify-center gap-4">
+        <button
+          type="button"
+          aria-label="Previous"
+          onClick={() => onChange(prev)}
+          className="inline-flex size-10 items-center justify-center border border-border bg-page text-ink transition hover:bg-ink hover:text-on-maroon focus-visible:outline-focus"
+        >
+          <ChevronLeft className="size-4" />
+        </button>
+        <div className="flex items-center gap-2">
+          {SLIDES.map((s, i) => (
+            <button
+              key={s.id}
+              type="button"
+              aria-label={`Show ${s.label}`}
+              aria-current={i === active}
+              onClick={() => onChange(i)}
+              className={cn(
+                'size-2 rounded-full transition',
+                i === active ? 'bg-ink scale-125' : 'bg-steel/40 hover:bg-steel',
+              )}
+            />
+          ))}
+        </div>
+        <button
+          type="button"
+          aria-label="Next"
+          onClick={() => onChange(next)}
+          className="inline-flex size-10 items-center justify-center border border-border bg-page text-ink transition hover:bg-ink hover:text-on-maroon focus-visible:outline-focus"
+        >
+          <ChevronRight className="size-4" />
+        </button>
+      </div>
+    </div>
+  )
+}
+
 /**
- * Opening screen: three pencil→interior panels draw together (slower),
- * then brand + CTAs settle in.
+ * Opening: three pencils draw → photos resolve → revolving circular slider.
  */
 export function SketchToRoom() {
   const reduced = usePrefersReducedMotion()
   const [showBrand, setShowBrand] = useState(reduced)
+  const [sliderMode, setSliderMode] = useState(reduced)
+  const [active, setActive] = useState(0)
   const progress = useMotionValue(reduced ? 1 : 0)
 
   const brandOpacity = useTransform(progress, [0.82, 0.96], [0, 1])
@@ -309,6 +553,8 @@ export function SketchToRoom() {
   useEffect(() => {
     if (reduced) {
       progress.set(1)
+      setShowBrand(true)
+      setSliderMode(true)
       return
     }
 
@@ -316,10 +562,22 @@ export function SketchToRoom() {
       duration: TOTAL_S,
       ease: [0.33, 0.1, 0.25, 1],
       delay: 0.35,
+      onComplete: () => {
+        window.setTimeout(() => setSliderMode(true), 650)
+      },
     })
 
     return () => controls.stop()
   }, [reduced, progress])
+
+  // Auto-advance revolving slider
+  useEffect(() => {
+    if (!sliderMode || reduced) return
+    const id = window.setInterval(() => {
+      setActive((i) => (i + 1) % SLIDES.length)
+    }, SLIDE_MS)
+    return () => window.clearInterval(id)
+  }, [sliderMode, reduced, active])
 
   const { primaryCta, secondaryCta } = homeHero
 
@@ -333,19 +591,63 @@ export function SketchToRoom() {
 
       <div className="relative z-10 flex min-h-0 flex-1 flex-col px-3 pb-5 sm:px-5 lg:px-8">
         <div className="mx-auto flex w-full max-w-[1400px] min-h-0 flex-1 flex-col gap-3 md:gap-4">
-          {/* Three panels — one screen, side by side */}
-          <div className="mt-3 grid min-h-0 flex-1 grid-cols-3 gap-1.5 sm:mt-4 sm:gap-2.5 md:gap-3 min-h-[56vh] md:min-h-0">
-            {PANELS.map((panel) => (
-              <SketchPanel
-                key={panel.id}
-                panel={panel}
-                reduced={reduced}
-                sharedProgress={progress}
-              />
-            ))}
+          <div className="relative mt-3 min-h-[56vh] flex-1 sm:mt-4 md:min-h-0">
+            <AnimatePresence mode="wait">
+              {!sliderMode ? (
+                <motion.div
+                  key="trio"
+                  className="absolute inset-0 grid grid-cols-3 gap-1.5 sm:gap-2.5 md:gap-3"
+                  exit={
+                    reduced
+                      ? undefined
+                      : {
+                          opacity: 0,
+                          scale: 0.88,
+                          rotate: -4,
+                          filter: 'blur(6px)',
+                          transition: { duration: 0.7, ease: easeOutExpo },
+                        }
+                  }
+                >
+                  {PANELS.map((panel) => (
+                    <SketchPanel
+                      key={panel.id}
+                      panel={panel}
+                      reduced={reduced}
+                      sharedProgress={progress}
+                    />
+                  ))}
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="slider"
+                  className="absolute inset-0"
+                  initial={
+                    reduced
+                      ? false
+                      : {
+                          opacity: 0,
+                          scale: 0.86,
+                          clipPath: 'circle(0% at 50% 50%)',
+                        }
+                  }
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                    clipPath: 'circle(150% at 50% 50%)',
+                  }}
+                  transition={{ duration: 1.1, ease: easeOutExpo }}
+                >
+                  <RevolvingSlider
+                    reduced={reduced}
+                    active={active}
+                    onChange={setActive}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
-          {/* Brand under the trio after reveal */}
           <div className="relative flex min-h-[7.5rem] shrink-0 items-center justify-center pb-2 pt-1 md:min-h-[9rem] md:pb-4">
             {showBrand ? (
               <motion.div
