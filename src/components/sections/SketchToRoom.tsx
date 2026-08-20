@@ -319,90 +319,6 @@ function SketchPanel({
   )
 }
 
-function relativeOffset(index: number, active: number, len: number) {
-  let d = index - active
-  if (d > len / 2) d -= len
-  if (d < -len / 2) d += len
-  return d
-}
-
-function orbitMotion(offset: number, reduced: boolean) {
-  if (reduced) {
-    return {
-      x: '-50%',
-      scale: offset === 0 ? 1 : 0.9,
-      rotateY: 0,
-      opacity: offset === 0 ? 1 : 0,
-      zIndex: offset === 0 ? 30 : 0,
-      filter: 'brightness(1)',
-      width: offset === 0 ? '92%' : '0%',
-    }
-  }
-
-  const table: Record<
-    number,
-    { x: string; scale: number; rotateY: number; opacity: number; zIndex: number; filter: string; width: string }
-  > = {
-    0: {
-      x: '-50%',
-      scale: 1,
-      rotateY: 0,
-      opacity: 1,
-      zIndex: 40,
-      filter: 'brightness(1)',
-      width: 'min(92vw, 70%)',
-    },
-    [-1]: {
-      x: 'calc(-50% - 41%)',
-      scale: 0.7,
-      rotateY: 28,
-      opacity: 0.7,
-      zIndex: 20,
-      filter: 'brightness(0.7)',
-      width: 'min(28vw, 14%)',
-    },
-    1: {
-      x: 'calc(-50% + 41%)',
-      scale: 0.7,
-      rotateY: -28,
-      opacity: 0.7,
-      zIndex: 20,
-      filter: 'brightness(0.7)',
-      width: 'min(28vw, 14%)',
-    },
-    [-2]: {
-      x: 'calc(-50% - 62%)',
-      scale: 0.48,
-      rotateY: 42,
-      opacity: 0.25,
-      zIndex: 10,
-      filter: 'brightness(0.5)',
-      width: 'min(22vw, 10%)',
-    },
-    2: {
-      x: 'calc(-50% + 62%)',
-      scale: 0.48,
-      rotateY: -42,
-      opacity: 0.25,
-      zIndex: 10,
-      filter: 'brightness(0.5)',
-      width: 'min(22vw, 10%)',
-    },
-  }
-
-  return (
-    table[offset] ?? {
-      x: '-50%',
-      scale: 0.35,
-      rotateY: 0,
-      opacity: 0,
-      zIndex: 0,
-      filter: 'brightness(0.4)',
-      width: '8%',
-    }
-  )
-}
-
 /**
  * Immersive circular gallery: wide center viewport + orbital side peeks.
  * Drag / swipe rotates scenes; no large arrow chrome.
@@ -418,8 +334,13 @@ function ImmersiveWorld({
   onChange: (index: number) => void
   brand: ReactNode
 }) {
-  const slide = SLIDES[active]
   const len = SLIDES.length
+  const prevIndex = (active - 1 + len) % len
+  const nextIndex = (active + 1) % len
+  const slide = SLIDES[active]
+  const prevSlide = SLIDES[prevIndex]
+  const nextSlide = SLIDES[nextIndex]
+
   const stageRef = useRef<HTMLDivElement>(null)
   const dragStartX = useRef<number | null>(null)
   const [dragging, setDragging] = useState(false)
@@ -430,8 +351,8 @@ function ImmersiveWorld({
   const my = useMotionValue(0)
   const smx = useSpring(mx, { stiffness: 70, damping: 22, mass: 0.4 })
   const smy = useSpring(my, { stiffness: 70, damping: 22, mass: 0.4 })
-  const parallaxX = useTransform(smx, [-0.5, 0.5], [10, -10])
-  const parallaxY = useTransform(smy, [-0.5, 0.5], [6, -6])
+  const parallaxX = useTransform(smx, [-0.5, 0.5], [8, -8])
+  const parallaxY = useTransform(smy, [-0.5, 0.5], [5, -5])
 
   function go(delta: number) {
     onChange((active + delta + len) % len)
@@ -445,19 +366,16 @@ function ImmersiveWorld({
 
   function onPointerMove(e: PointerEvent<HTMLDivElement>) {
     if (dragStartX.current == null) return
-    const dx = e.clientX - dragStartX.current
-    dragX.set(dx * 0.55)
+    dragX.set((e.clientX - dragStartX.current) * 0.45)
   }
 
-  function onPointerUp(e: PointerEvent<HTMLDivElement>) {
+  function onPointerUp() {
     if (dragStartX.current == null) return
-    const dx = e.clientX - dragStartX.current
+    const dx = dragX.get() / 0.45
     dragStartX.current = null
     setDragging(false)
     dragX.set(0)
-    if (Math.abs(dx) > 56) {
-      go(dx < 0 ? 1 : -1)
-    }
+    if (Math.abs(dx) > 56) go(dx < 0 ? 1 : -1)
   }
 
   function onStageMove(e: MouseEvent<HTMLDivElement>) {
@@ -477,7 +395,6 @@ function ImmersiveWorld({
         my.set(0)
       }}
     >
-      {/* Atmospheric hinterland */}
       <div className="absolute inset-0" aria-hidden>
         <AnimatePresence mode="sync" initial={false}>
           <motion.img
@@ -494,7 +411,6 @@ function ImmersiveWorld({
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_10%,rgba(10,10,10,0.72)_100%)]" />
       </div>
 
-      {/* Orbital rings — circular gallery cue */}
       <div
         className="pointer-events-none absolute inset-0 flex items-center justify-center"
         aria-hidden
@@ -517,17 +433,15 @@ function ImmersiveWorld({
               : { duration: 72, ease: 'linear', repeat: Infinity }
           }
         />
-        <div className="absolute h-[min(42%,340px)] w-[min(70%,640px)] rounded-[50%] border border-white/10" />
       </div>
 
-      {/* 3D circular track */}
       <motion.div
         className={cn(
-          'absolute inset-x-0 top-[4%] bottom-[7.5rem] md:top-[5%] md:bottom-[8.5rem]',
+          'absolute inset-x-0 top-[4%] bottom-[7.5rem] px-2 md:top-[5%] md:bottom-[8.5rem] md:px-4',
           dragging ? 'cursor-grabbing' : 'cursor-grab',
         )}
         style={{
-          perspective: 1600,
+          perspective: 1400,
           x: reduced ? 0 : parallaxX,
           y: reduced ? 0 : parallaxY,
         }}
@@ -537,120 +451,148 @@ function ImmersiveWorld({
         onPointerCancel={onPointerUp}
       >
         <motion.div
-          className="relative mx-auto h-full w-full max-w-[1400px]"
+          className="mx-auto flex h-full w-full max-w-[1400px] items-center gap-2 md:gap-3"
           style={{
             transformStyle: 'preserve-3d',
             x: dragSpring,
           }}
         >
-          {SLIDES.map((item, index) => {
-            const offset = relativeOffset(index, active, len)
-            const style = orbitMotion(offset, reduced)
-            const isCenter = offset === 0
-            const visible = Math.abs(offset) <= 2
+          {/* Previous peek — left orbit */}
+          <motion.button
+            type="button"
+            aria-label={`Previous: ${prevSlide.label}`}
+            onClick={() => onChange(prevIndex)}
+            className="relative hidden h-[72%] w-[12%] shrink-0 overflow-hidden rounded-2xl border border-white/15 focus-visible:outline-focus md:block"
+            initial={false}
+            animate={
+              reduced
+                ? { opacity: 0.55, rotateY: 0, scale: 0.92 }
+                : { opacity: 0.7, rotateY: 22, scale: 0.92 }
+            }
+            transition={{ type: 'spring', stiffness: 120, damping: 22 }}
+            style={{ transformOrigin: 'right center' }}
+          >
+            <img
+              src={prevSlide.image}
+              alt=""
+              className="h-full w-full object-cover brightness-75"
+              draggable={false}
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-ink/35" />
+          </motion.button>
 
-            return (
-              <motion.article
-                key={item.id}
-                className={cn(
-                  'absolute left-1/2 top-1/2 h-[86%] overflow-hidden rounded-[clamp(1rem,2vw,1.75rem)] border border-white/20 bg-ink shadow-[0_24px_80px_rgba(0,0,0,0.45)] will-change-transform',
-                  !visible && 'pointer-events-none',
-                )}
-                style={{
-                  transformOrigin: 'center center',
-                  zIndex: style.zIndex,
-                }}
-                initial={false}
-                animate={{
-                  x: style.x,
-                  y: '-50%',
-                  scale: style.scale,
-                  rotateY: style.rotateY,
-                  opacity: style.opacity,
-                  filter: style.filter,
-                  width: style.width,
-                }}
-                transition={{
-                  type: 'spring',
-                  stiffness: 110,
-                  damping: 22,
-                  mass: 0.75,
-                }}
-                onClick={() => {
-                  if (!isCenter && Math.abs(offset) === 1) onChange(index)
-                }}
+          {/* Center viewport — dominant */}
+          <motion.article
+            key={slide.id}
+            className="relative h-full min-w-0 flex-1 overflow-hidden rounded-[clamp(1rem,2vw,1.75rem)] border border-white/25 shadow-[0_24px_80px_rgba(0,0,0,0.5)]"
+            initial={
+              reduced
+                ? false
+                : { opacity: 0.6, scale: 0.96, rotateY: 8 }
+            }
+            animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+            transition={{ type: 'spring', stiffness: 110, damping: 20 }}
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.img
+                key={slide.id}
+                src={slide.image}
+                alt={slide.alt}
+                className="absolute inset-0 h-full w-full object-cover"
+                draggable={false}
+                fetchPriority="high"
+                initial={
+                  reduced
+                    ? false
+                    : { opacity: 0, scale: 1.08 }
+                }
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.02 }}
+                transition={{ duration: 0.65, ease: easeOutExpo }}
+              />
+            </AnimatePresence>
+            <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-transparent to-ink/20" />
+
+            <div className="absolute inset-x-0 top-0 z-10 flex items-start justify-between p-5 md:p-7">
+              <div>
+                <p className="font-mono text-[0.65rem] tracking-[0.16em] text-on-maroon/75">
+                  {slide.code}
+                </p>
+                <h2 className="mt-1 font-display text-2xl font-semibold tracking-tight text-on-maroon md:text-4xl">
+                  {slide.label}
+                </h2>
+              </div>
+              <svg
+                className="size-11 text-on-maroon/65 md:size-12"
+                viewBox="0 0 100 100"
+                fill="none"
+                aria-hidden
               >
-                <img
-                  src={item.image}
-                  alt={isCenter ? item.alt : ''}
-                  className="h-full w-full object-cover"
-                  draggable={false}
-                  fetchPriority={isCenter ? 'high' : 'auto'}
-                  loading={isCenter ? 'eager' : 'lazy'}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="40"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  opacity="0.25"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-ink/20" />
+                <motion.circle
+                  key={`arc-${active}`}
+                  cx="50"
+                  cy="50"
+                  r="40"
+                  stroke="currentColor"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                  pathLength={1}
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{
+                    duration: reduced ? 0 : SLIDE_MS / 1000,
+                    ease: 'linear',
+                  }}
+                  style={{ rotate: -90, transformOrigin: '50% 50%' }}
+                />
+              </svg>
+            </div>
 
-                {isCenter ? (
-                  <div className="absolute inset-x-0 top-0 z-10 flex items-start justify-between p-5 md:p-7">
-                    <div>
-                      <p className="font-mono text-[0.65rem] tracking-[0.16em] text-on-maroon/75">
-                        {item.code}
-                      </p>
-                      <h2 className="mt-1 font-display text-2xl font-semibold tracking-tight text-on-maroon md:text-4xl">
-                        {item.label}
-                      </h2>
-                    </div>
-                    <svg
-                      className="size-11 text-on-maroon/65 md:size-12"
-                      viewBox="0 0 100 100"
-                      fill="none"
-                      aria-hidden
-                    >
-                      <circle
-                        cx="50"
-                        cy="50"
-                        r="40"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        opacity="0.25"
-                      />
-                      <motion.circle
-                        key={`arc-${active}`}
-                        cx="50"
-                        cy="50"
-                        r="40"
-                        stroke="currentColor"
-                        strokeWidth="2.4"
-                        strokeLinecap="round"
-                        pathLength={1}
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{
-                          duration: reduced ? 0 : SLIDE_MS / 1000,
-                          ease: 'linear',
-                        }}
-                        style={{ rotate: -90, transformOrigin: '50% 50%' }}
-                      />
-                    </svg>
-                  </div>
-                ) : null}
+            <div className="absolute inset-x-0 bottom-0 z-10 px-5 pb-5 pt-16 md:px-8 md:pb-7">
+              {brand}
+            </div>
+          </motion.article>
 
-                {isCenter ? (
-                  <div className="absolute inset-x-0 bottom-0 z-10 px-5 pb-5 pt-16 md:px-8 md:pb-7">
-                    {brand}
-                  </div>
-                ) : null}
-              </motion.article>
-            )
-          })}
+          {/* Next peek — right orbit */}
+          <motion.button
+            type="button"
+            aria-label={`Next: ${nextSlide.label}`}
+            onClick={() => onChange(nextIndex)}
+            className="relative hidden h-[72%] w-[12%] shrink-0 overflow-hidden rounded-2xl border border-white/15 focus-visible:outline-focus md:block"
+            initial={false}
+            animate={
+              reduced
+                ? { opacity: 0.55, rotateY: 0, scale: 0.92 }
+                : { opacity: 0.7, rotateY: -22, scale: 0.92 }
+            }
+            transition={{ type: 'spring', stiffness: 120, damping: 22 }}
+            style={{ transformOrigin: 'left center' }}
+          >
+            <img
+              src={nextSlide.image}
+              alt=""
+              className="h-full w-full object-cover brightness-75"
+              draggable={false}
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-ink/35" />
+          </motion.button>
         </motion.div>
 
-        {/* Tiny edge chevrons — accessibility only */}
         <button
           type="button"
           aria-label="Previous space"
           onClick={() => go(-1)}
-          className="absolute left-2 top-1/2 z-50 -translate-y-1/2 text-on-maroon/50 transition hover:text-on-maroon focus-visible:outline-focus md:left-3"
+          className="absolute left-1 top-1/2 z-50 -translate-y-1/2 text-on-maroon/45 transition hover:text-on-maroon focus-visible:outline-focus md:left-2"
         >
           <ChevronLeft className="size-5" strokeWidth={1.5} />
         </button>
@@ -658,13 +600,12 @@ function ImmersiveWorld({
           type="button"
           aria-label="Next space"
           onClick={() => go(1)}
-          className="absolute right-2 top-1/2 z-50 -translate-y-1/2 text-on-maroon/50 transition hover:text-on-maroon focus-visible:outline-focus md:right-3"
+          className="absolute right-1 top-1/2 z-50 -translate-y-1/2 text-on-maroon/45 transition hover:text-on-maroon focus-visible:outline-focus md:right-2"
         >
           <ChevronRight className="size-5" strokeWidth={1.5} />
         </button>
       </motion.div>
 
-      {/* Minimal pagination */}
       <div className="absolute inset-x-0 bottom-5 z-40 flex justify-center gap-2 md:bottom-6">
         {SLIDES.map((s, i) => (
           <button
