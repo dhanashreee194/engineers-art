@@ -43,7 +43,7 @@ export function SiteHeader() {
           : 'border-b border-border/80 bg-page/90 backdrop-blur-[12px]',
       )}
     >
-      <Container className="flex h-16 items-center justify-between gap-4 lg:h-[72px]">
+      <Container className="flex h-[4.5rem] items-center justify-between gap-4 lg:h-20">
         <NavLink
           to="/"
           className="inline-flex shrink-0 items-center focus-visible:outline-focus"
@@ -52,9 +52,9 @@ export function SiteHeader() {
           <img
             src={site.logoLight}
             alt={site.name}
-            width={160}
-            height={160}
-            className="h-11 w-auto object-contain md:h-12"
+            width={220}
+            height={100}
+            className="h-14 w-auto object-contain md:h-16"
             decoding="async"
           />
         </NavLink>

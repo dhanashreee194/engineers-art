@@ -29,9 +29,9 @@ export function SiteFooter() {
           <img
             src={site.logoDark}
             alt={site.name}
-            width={180}
-            height={180}
-            className="h-16 w-auto object-contain"
+            width={240}
+            height={110}
+            className="h-20 w-auto object-contain md:h-24"
             decoding="async"
           />
           <p className="text-sm leading-relaxed text-on-maroon/75">

@@ -18,8 +18,8 @@ export const site = {
     '1, Kothari Plaza, Near Bali Maharaj Mandir, Mumbai Agra Highway, Panchavati, Nashik-422003, Maharashtra (India)',
   established: 2018,
   city: 'Nashik',
-  logoLight: assetUrl('images/brand/logo-light.jpg'),
-  logoDark: assetUrl('images/brand/logo-dark.jpg'),
+  logoLight: assetUrl('images/brand/logo-light.png'),
+  logoDark: assetUrl('images/brand/logo-dark.png'),
 } as const
 
 /**

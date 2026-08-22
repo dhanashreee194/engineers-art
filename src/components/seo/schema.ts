@@ -12,7 +12,7 @@ export function organizationSchema() {
     telephone: site.phoneDisplay,
     foundingDate: String(site.established),
     slogan: site.tagline,
-    logo: `${SITE_URL}/images/brand/logo-light.jpg`,
+    logo: `${SITE_URL}/images/brand/logo-light.png`,
     sameAs: [
       'https://www.facebook.com/ArtisticEngineers',
       'https://www.youtube.com/@artisticengineers5659',
