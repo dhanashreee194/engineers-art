@@ -46,12 +46,17 @@ export function SiteHeader() {
       <Container className="flex h-16 items-center justify-between gap-4 lg:h-[72px]">
         <NavLink
           to="/"
-          className={cn(
-            'font-display text-lg font-semibold tracking-tight focus-visible:outline-focus',
-            ink,
-          )}
+          className="inline-flex shrink-0 items-center focus-visible:outline-focus"
+          aria-label={site.name}
         >
-          {site.name}
+          <img
+            src={site.logoLight}
+            alt={site.name}
+            width={160}
+            height={160}
+            className="h-11 w-auto object-contain md:h-12"
+            decoding="async"
+          />
         </NavLink>
 
         <nav aria-label="Primary" className="hidden items-center gap-1 xl:flex">

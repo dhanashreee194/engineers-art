@@ -26,9 +26,14 @@ export function SiteFooter() {
     <footer className="border-t border-border bg-ink text-on-maroon">
       <Container className="grid gap-10 py-12 md:grid-cols-2 lg:grid-cols-4 lg:py-16">
         <div className="space-y-4">
-          <p className="font-display text-xl font-semibold text-on-maroon">
-            {site.name}
-          </p>
+          <img
+            src={site.logoDark}
+            alt={site.name}
+            width={180}
+            height={180}
+            className="h-16 w-auto object-contain"
+            decoding="async"
+          />
           <p className="text-sm leading-relaxed text-on-maroon/75">
             Precision metal engineering and smart space systems from {site.city}.{' '}
             {site.tagline}.
