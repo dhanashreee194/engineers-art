@@ -1,0 +1,1 @@
+import{u as e}from"./motion-Dy0PEpql.js";import{ProductDetailPage as t}from"./ProductsPage-Cj-ABujp.js";var n=e();function r(){return(0,n.jsx)(t,{category:`exterior`})}export{r as default};

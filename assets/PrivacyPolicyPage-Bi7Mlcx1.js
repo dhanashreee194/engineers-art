@@ -1,0 +1,1 @@
+import{u as e}from"./motion-Dy0PEpql.js";import{t}from"./LegalPage-DZZhKKPY.js";var n=e();function r(){return(0,n.jsx)(t,{title:`Privacy Policy`,summary:`How Artistic Engineers handles enquiry and contact information.`})}export{r as default};

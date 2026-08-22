@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+Disallow: /design-system
+
+Sitemap: https://www.artisticengineers.in/sitemap.xml
