@@ -56,8 +56,8 @@
   --color-brass: #e2dfd8;
 
   /* Typography */
-  --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
-  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
 
   --text-hero: clamp(2.5rem, 5vw, 4.5rem);
   --text-hero--line-height: 1.05;
